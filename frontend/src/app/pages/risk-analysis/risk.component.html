@@ -1,0 +1,64 @@
+<div class="space-y-6 max-w-7xl mx-auto">
+  <div>
+    <h1 class="text-3xl font-bold text-gray-900">Risk Analysis</h1>
+    <p class="text-gray-600">Risk assessment and management tools</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900">Risk Score</h3>
+      <p class="text-2xl font-bold text-red-600" *ngIf="riskAnalysis$ | async as data">{{ data.overall_risk_score }}%</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900">VaR (95%)</h3>
+      <p class="text-2xl font-bold text-blue-600" *ngIf="riskAnalysis$ | async as data">${{ data.risk_metrics.var_95 }}</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900">Volatility</h3>
+      <p class="text-2xl font-bold text-purple-600" *ngIf="riskAnalysis$ | async as data">{{ data.market_risk.volatility }}%</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900">Market Regime</h3>
+      <p class="text-2xl font-bold text-green-600" *ngIf="marketRisk$ | async as data">{{ data.market_regime || 'neutral' }}</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-xl font-bold text-gray-900 mb-4">Risk Metrics</h3>
+      <div class="space-y-4">
+        <div class="flex justify-between" *ngIf="riskMetrics$ | async as data">
+          <span class="text-gray-600">Max Drawdown</span>
+          <span class="font-semibold text-red-600">{{ data.max_drawdown }}%</span>
+        </div>
+        <div class="flex justify-between" *ngIf="riskMetrics$ | async as data">
+          <span class="text-gray-600">Beta</span>
+          <span class="font-semibold text-blue-600">{{ data.beta }}</span>
+        </div>
+        <div class="flex justify-between" *ngIf="riskMetrics$ | async as data">
+          <span class="text-gray-600">Sharpe Ratio</span>
+          <span class="font-semibold text-gray-600">{{ data.sharpe_ratio }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-xl font-bold text-gray-900 mb-4">Risk Alerts</h3>
+      <div class="space-y-4">
+        <div *ngIf="riskAlerts$ | async as alerts">
+          <div *ngIf="alerts.length === 0" class="text-center py-8">
+            <p class="text-gray-500">No active risk alerts</p>
+          </div>
+          <div *ngFor="let alert of alerts" class="border-l-4 border-blue-500 pl-4">
+            <p class="font-medium text-gray-900">{{ alert.type | titlecase }}</p>
+            <p class="text-sm text-gray-600">{{ alert.message }}</p>
+            <p class="text-xs text-gray-400">{{ alert.timestamp | date:'short' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,416 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <div class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="py-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">RL Strategy Agent</h1>
+            <p class="mt-2 text-sm text-gray-600">Reinforcement Learning powered trading strategy optimization</p>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg">
+              <span class="text-sm font-medium">AI-Powered</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" *ngIf="rlStrategyAgentSummary$ | async as summary">
+      <!-- Algorithm Status -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Algorithm</p>
+            <p class="text-2xl font-semibold text-gray-900">{{ summary.algorithm }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Training Status -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Training Status</p>
+            <p class="text-2xl font-semibold text-gray-900">
+              <span [class]="summary.is_trained ? 'text-green-600' : 'text-yellow-600'">
+                {{ summary.is_trained ? 'Trained' : 'Training' }}
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Episodes Trained -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Episodes Trained</p>
+            <p class="text-2xl font-semibold text-gray-900">{{ summary.training_episodes | number }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Model Accuracy -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Model Accuracy</p>
+            <p class="text-2xl font-semibold text-gray-900">{{ summary.model_accuracy | percent:'1.1-1' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance Metrics -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8" *ngIf="rlStrategyAgentSummary$ | async as summary">
+      <!-- Trading Performance -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">Trading Performance</h3>
+        </div>
+        <div class="p-6">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="text-center">
+              <p class="text-sm text-gray-500">Total Return</p>
+              <p class="text-2xl font-semibold" [class]="summary.performance_metrics.total_return >= 0 ? 'text-green-600' : 'text-red-600'">
+                {{ summary.performance_metrics.total_return | percent:'1.1-1' }}
+              </p>
+            </div>
+            <div class="text-center">
+              <p class="text-sm text-gray-500">Sharpe Ratio</p>
+              <p class="text-2xl font-semibold text-gray-900">{{ summary.performance_metrics.sharpe_ratio | number:'1.2-2' }}</p>
+            </div>
+            <div class="text-center">
+              <p class="text-sm text-gray-500">Max Drawdown</p>
+              <p class="text-2xl font-semibold text-red-600">{{ summary.performance_metrics.max_drawdown | percent:'1.1-1' }}</p>
+            </div>
+            <div class="text-center">
+              <p class="text-sm text-gray-500">Win Rate</p>
+              <p class="text-2xl font-semibold text-green-600">{{ summary.performance_metrics.win_rate | percent:'1.1-1' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Training Metrics -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">Training Metrics</h3>
+        </div>
+        <div class="p-6">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="text-center">
+              <p class="text-sm text-gray-500">Avg Episode Reward</p>
+              <p class="text-2xl font-semibold text-gray-900">{{ summary.training_metrics.avg_episode_reward | number:'1.0-0' }}</p>
+            </div>
+            <div class="text-center">
+              <p class="text-sm text-gray-500">Best Episode Reward</p>
+              <p class="text-2xl font-semibold text-green-600">{{ summary.training_metrics.best_episode_reward | number:'1.0-0' }}</p>
+            </div>
+            <div class="text-center">
+              <p class="text-sm text-gray-500">Exploration Rate</p>
+              <p class="text-2xl font-semibold text-blue-600">{{ summary.training_metrics.exploration_rate | percent:'1.1-1' }}</p>
+            </div>
+            <div class="text-center">
+              <p class="text-sm text-gray-500">Buffer Size</p>
+              <p class="text-2xl font-semibold text-gray-900">{{ summary.training_metrics.experience_buffer_size | number }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Training Status -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8" *ngIf="rlTrainingStatus$ | async as trainingStatus">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">Training Status</h3>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Training Progress -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-medium text-gray-700">Training Progress</span>
+              <span class="text-sm text-gray-500">{{ trainingStatus.training_status.training_progress | percent:'1.1-1' }}</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full" 
+                   [style.width.%]="trainingStatus.training_status.training_progress * 100"></div>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">
+              Episode {{ trainingStatus.training_status.current_episode }} of {{ trainingStatus.training_status.total_episodes }}
+            </p>
+          </div>
+
+          <!-- Algorithm Info -->
+          <div>
+            <h4 class="text-sm font-medium text-gray-700 mb-3">Algorithm Configuration</h4>
+            <div class="space-y-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Learning Rate:</span>
+                <span class="font-medium">{{ trainingStatus.algorithm_info.learning_rate | number:'1.0-5' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Gamma:</span>
+                <span class="font-medium">{{ trainingStatus.algorithm_info.gamma | number:'1.3-3' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Batch Size:</span>
+                <span class="font-medium">{{ trainingStatus.algorithm_info.batch_size }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Environment Info -->
+          <div>
+            <h4 class="text-sm font-medium text-gray-700 mb-3">Market Environment</h4>
+            <div class="space-y-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Regime:</span>
+                <span class="font-medium capitalize">{{ trainingStatus.environment_info.market_regime }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Volatility:</span>
+                <span class="font-medium">{{ trainingStatus.environment_info.volatility_level | percent:'1.1-1' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Episode Length:</span>
+                <span class="font-medium">{{ trainingStatus.environment_info.episode_length }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance Analysis -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8" *ngIf="rlPerformance$ | async as performance">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">Performance Analysis</h3>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Risk Metrics -->
+          <div>
+            <h4 class="text-sm font-medium text-gray-700 mb-3">Risk Metrics</h4>
+            <div class="space-y-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">VaR (95%):</span>
+                <span class="font-medium">{{ performance.risk_metrics.var_95 | percent:'1.1-1' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">CVaR (95%):</span>
+                <span class="font-medium">{{ performance.risk_metrics.cvar_95 | percent:'1.1-1' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Volatility:</span>
+                <span class="font-medium">{{ performance.risk_metrics.volatility | percent:'1.1-1' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Beta:</span>
+                <span class="font-medium">{{ performance.risk_metrics.beta | number:'1.2-2' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Algorithm Analysis -->
+          <div>
+            <h4 class="text-sm font-medium text-gray-700 mb-3">Algorithm Analysis</h4>
+            <div class="space-y-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Exploration Efficiency:</span>
+                <span class="font-medium">{{ performance.algorithm_analysis.exploration_efficiency | percent:'1.1-1' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Exploitation Effectiveness:</span>
+                <span class="font-medium">{{ performance.algorithm_analysis.exploitation_effectiveness | percent:'1.1-1' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Policy Stability:</span>
+                <span class="font-medium">{{ performance.algorithm_analysis.policy_stability | percent:'1.1-1' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Learning Curve Slope:</span>
+                <span class="font-medium">{{ performance.algorithm_analysis.learning_curve_slope | number:'1.3-3' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Market Adaptation -->
+          <div>
+            <h4 class="text-sm font-medium text-gray-700 mb-3">Market Adaptation</h4>
+            <div class="space-y-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Regime Adaptation:</span>
+                <span class="font-medium">{{ performance.market_adaptation.regime_adaptation_speed | percent:'1.1-1' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Volatility Handling:</span>
+                <span class="font-medium">{{ performance.market_adaptation.volatility_handling | percent:'1.1-1' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Trend Following:</span>
+                <span class="font-medium">{{ performance.market_adaptation.trend_following_accuracy | percent:'1.1-1' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Mean Reversion:</span>
+                <span class="font-medium">{{ performance.market_adaptation.mean_reversion_accuracy | percent:'1.1-1' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Experience Replay -->
+          <div>
+            <h4 class="text-sm font-medium text-gray-700 mb-3">Experience Replay</h4>
+            <div class="space-y-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Buffer Utilization:</span>
+                <span class="font-medium">{{ performance.experience_replay.buffer_utilization | percent:'1.1-1' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Sample Efficiency:</span>
+                <span class="font-medium">{{ performance.experience_replay.sample_efficiency | percent:'1.1-1' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Priority Replay:</span>
+                <span class="font-medium">{{ performance.experience_replay.priority_replay_effectiveness | percent:'1.1-1' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Experience Diversity:</span>
+                <span class="font-medium">{{ performance.experience_replay.experience_diversity | percent:'1.1-1' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Analysis -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200" *ngIf="rlActions$ | async as actions">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">Action Analysis</h3>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Action Distribution -->
+          <div>
+            <h4 class="text-sm font-medium text-gray-700 mb-4">Action Distribution</h4>
+            <div class="space-y-3">
+              <div *ngFor="let action of Object.keys(actions.action_distribution)" class="flex items-center">
+                <div class="w-20 text-sm text-gray-600 capitalize">{{ action.replace('_', ' ') }}</div>
+                <div class="flex-1 mx-4">
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full" 
+                         [style.width.%]="actions.action_distribution[action] * 100"></div>
+                  </div>
+                </div>
+                <div class="w-12 text-sm font-medium text-gray-900 text-right">
+                  {{ actions.action_distribution[action] | percent:'1.1-1' }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Effectiveness -->
+          <div>
+            <h4 class="text-sm font-medium text-gray-700 mb-4">Action Effectiveness</h4>
+            <div class="space-y-3">
+              <div *ngFor="let action of Object.keys(actions.action_effectiveness)" class="flex items-center">
+                <div class="w-20 text-sm text-gray-600 capitalize">{{ action.replace('_', ' ').replace(' rate', '') }}</div>
+                <div class="flex-1 mx-4">
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full" 
+                         [style.width.%]="actions.action_effectiveness[action] * 100"></div>
+                  </div>
+                </div>
+                <div class="w-12 text-sm font-medium text-gray-900 text-right">
+                  {{ actions.action_effectiveness[action] | percent:'1.1-1' }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Actions -->
+        <div class="mt-8">
+          <h4 class="text-sm font-medium text-gray-700 mb-4">Recent Actions</h4>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Confidence</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expected Reward</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Market Conditions</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr *ngFor="let action of actions.recent_actions">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ action.timestamp | date:'short' }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                          [class]="{
+                            'bg-green-100 text-green-800': action.action.includes('buy'),
+                            'bg-red-100 text-red-800': action.action.includes('sell'),
+                            'bg-gray-100 text-gray-800': action.action === 'hold'
+                          }">
+                      {{ action.action.replace('_', ' ').toUpperCase() }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ action.confidence | percent:'1.1-1' }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm" 
+                      [class]="action.expected_reward >= 0 ? 'text-green-600' : 'text-red-600'">
+                    {{ action.expected_reward | percent:'1.2-2' }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 capitalize">
+                    {{ action.market_conditions }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

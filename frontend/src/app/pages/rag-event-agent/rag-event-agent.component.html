@@ -1,0 +1,643 @@
+<div class="space-y-6 max-w-7xl mx-auto">
+  <!-- Page Header -->
+  <div>
+    <h1 class="text-3xl font-bold text-gray-900">RAG Event Agent</h1>
+    <p class="text-gray-600">LLM-RAG powered event analysis and news impact prediction</p>
+  </div>
+
+  <!-- Loading Header -->
+  <div *ngIf="isLoadingSummary || isLoadingDocuments || isLoadingAnalysis || isLoadingPerformance" class="flex items-center justify-center py-8">
+    <div class="flex items-center space-x-3">
+      <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+      <span class="text-lg font-medium text-gray-700">Loading RAG Event Agent data...</span>
+    </div>
+  </div>
+
+  <!-- RAG Event Agent Overview Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" *ngIf="!isLoadingSummary && (ragEventAgentSummary$ | async) as summary; else summaryLoading">
+    <div class="metric-card-enhanced">
+      <div class="p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Total Documents</p>
+            <p class="text-2xl font-bold text-gray-900">{{ summary ? formatNumber(summary.total_documents) : '0' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-card-enhanced">
+      <div class="p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">RAG Accuracy</p>
+            <p class="text-2xl font-bold text-gray-900">{{ summary ? formatPercent(summary.rag_accuracy) : '0%' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-card-enhanced">
+      <div class="p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">LLM Status</p>
+            <p class="text-2xl font-bold text-gray-900">{{ summary ? (summary.llm_enabled ? 'Enabled' : 'Disabled') : 'Unknown' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-card-enhanced">
+      <div class="p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-12 h-12 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Avg Response</p>
+            <p class="text-2xl font-bold text-gray-900">{{ summary ? summary.avg_response_time.toFixed(2) + 's' : '0s' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Loading Template -->
+  <ng-template #summaryLoading>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="metric-card-enhanced" *ngFor="let i of [1,2,3,4]">
+        <div class="p-6">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <div class="w-12 h-12 bg-gray-300 rounded-xl animate-pulse"></div>
+            </div>
+            <div class="ml-4 flex-1">
+              <div class="h-4 bg-gray-300 rounded animate-pulse mb-2"></div>
+              <div class="h-8 bg-gray-300 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Multi-Sector RAG Analysis -->
+  <div class="space-y-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-xl font-bold text-gray-900">Sector Analysis</h2>
+        <p class="text-gray-600">AI-powered analysis across major market sectors</p>
+      </div>
+      <button 
+        (click)="refreshAllSectors()"
+        [disabled]="isRefreshingAll"
+        class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center">
+        <svg *ngIf="isRefreshingAll" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <svg *ngIf="!isRefreshingAll" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        {{ isRefreshingAll ? 'Refreshing...' : 'Refresh All Sectors' }}
+      </button>
+    </div>
+
+    <!-- Sector Analysis Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Technology Sector -->
+      <div class="metric-card-enhanced" *ngIf="!isLoadingTechnology && (technologyAnalysis$ | async) as analysis; else technologyLoading">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-blue-100">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-medium text-gray-900">Technology</h3>
+                <p class="text-sm text-gray-600">AI, Semiconductors, Software</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <div class="w-16 bg-gray-200 rounded-full h-2">
+                <div class="h-2 rounded-full bg-blue-500" [style.width.%]="analysis ? analysis.confidence * 100 : 0"></div>
+              </div>
+              <span class="text-sm font-semibold text-gray-900">{{ analysis ? formatPercent(analysis.confidence) : '0%' }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-gray-600">Relevant Docs</span>
+            <span class="text-sm font-semibold text-gray-900">{{ analysis ? analysis.relevant_docs.length : 0 }}</span>
+          </div>
+          <div class="mt-4">
+            <h4 class="text-sm font-medium text-gray-900 mb-2">Analysis:</h4>
+            <div class="bg-gray-50 rounded-lg p-3 text-sm text-gray-700 max-h-32 overflow-y-auto">
+              {{ analysis ? analysis.llm_response : 'Loading...' }}
+            </div>
+          </div>
+          <button 
+            (click)="refreshSectorAnalysis('technology')"
+            [disabled]="isRefreshingTechnology"
+            class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-3 py-2 rounded text-sm font-medium transition-colors">
+            {{ isRefreshingTechnology ? 'Refreshing...' : 'Refresh Analysis' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Finance Sector -->
+      <div class="metric-card-enhanced" *ngIf="!isLoadingFinance && (financeAnalysis$ | async) as analysis; else financeLoading">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-green-50 to-green-100">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-medium text-gray-900">Finance</h3>
+                <p class="text-sm text-gray-600">Banking, Fintech, Payments</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <div class="w-16 bg-gray-200 rounded-full h-2">
+                <div class="h-2 rounded-full bg-green-500" [style.width.%]="analysis ? analysis.confidence * 100 : 0"></div>
+              </div>
+              <span class="text-sm font-semibold text-gray-900">{{ analysis ? formatPercent(analysis.confidence) : '0%' }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-gray-600">Relevant Docs</span>
+            <span class="text-sm font-semibold text-gray-900">{{ analysis ? analysis.relevant_docs.length : 0 }}</span>
+          </div>
+          <div class="mt-4">
+            <h4 class="text-sm font-medium text-gray-900 mb-2">Analysis:</h4>
+            <div class="bg-gray-50 rounded-lg p-3 text-sm text-gray-700 max-h-32 overflow-y-auto">
+              {{ analysis ? analysis.llm_response : 'Loading...' }}
+            </div>
+          </div>
+          <button 
+            (click)="refreshSectorAnalysis('finance')"
+            [disabled]="isRefreshingFinance"
+            class="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-3 py-2 rounded text-sm font-medium transition-colors">
+            {{ isRefreshingFinance ? 'Refreshing...' : 'Refresh Analysis' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Healthcare Sector -->
+      <div class="metric-card-enhanced" *ngIf="!isLoadingHealthcare && (healthcareAnalysis$ | async) as analysis; else healthcareLoading">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-red-50 to-red-100">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <div class="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-medium text-gray-900">Healthcare</h3>
+                <p class="text-sm text-gray-600">Pharma, Biotech, Medical Devices</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <div class="w-16 bg-gray-200 rounded-full h-2">
+                <div class="h-2 rounded-full bg-red-500" [style.width.%]="analysis ? analysis.confidence * 100 : 0"></div>
+              </div>
+              <span class="text-sm font-semibold text-gray-900">{{ analysis ? formatPercent(analysis.confidence) : '0%' }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-gray-600">Relevant Docs</span>
+            <span class="text-sm font-semibold text-gray-900">{{ analysis ? analysis.relevant_docs.length : 0 }}</span>
+          </div>
+          <div class="mt-4">
+            <h4 class="text-sm font-medium text-gray-900 mb-2">Analysis:</h4>
+            <div class="bg-gray-50 rounded-lg p-3 text-sm text-gray-700 max-h-32 overflow-y-auto">
+              {{ analysis ? analysis.llm_response : 'Loading...' }}
+            </div>
+          </div>
+          <button 
+            (click)="refreshSectorAnalysis('healthcare')"
+            [disabled]="isRefreshingHealthcare"
+            class="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white px-3 py-2 rounded text-sm font-medium transition-colors">
+            {{ isRefreshingHealthcare ? 'Refreshing...' : 'Refresh Analysis' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Retail Sector -->
+      <div class="metric-card-enhanced" *ngIf="!isLoadingRetail && (retailAnalysis$ | async) as analysis; else retailLoading">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-purple-100">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-medium text-gray-900">Retail</h3>
+                <p class="text-sm text-gray-600">E-commerce, Consumer Spending</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <div class="w-16 bg-gray-200 rounded-full h-2">
+                <div class="h-2 rounded-full bg-purple-500" [style.width.%]="analysis ? analysis.confidence * 100 : 0"></div>
+              </div>
+              <span class="text-sm font-semibold text-gray-900">{{ analysis ? formatPercent(analysis.confidence) : '0%' }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-gray-600">Relevant Docs</span>
+            <span class="text-sm font-semibold text-gray-900">{{ analysis ? analysis.relevant_docs.length : 0 }}</span>
+          </div>
+          <div class="mt-4">
+            <h4 class="text-sm font-medium text-gray-900 mb-2">Analysis:</h4>
+            <div class="bg-gray-50 rounded-lg p-3 text-sm text-gray-700 max-h-32 overflow-y-auto">
+              {{ analysis ? analysis.llm_response : 'Loading...' }}
+            </div>
+          </div>
+          <button 
+            (click)="refreshSectorAnalysis('retail')"
+            [disabled]="isRefreshingRetail"
+            class="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white px-3 py-2 rounded text-sm font-medium transition-colors">
+            {{ isRefreshingRetail ? 'Refreshing...' : 'Refresh Analysis' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent News Documents -->
+    <div class="metric-card-enhanced" *ngIf="!isLoadingDocuments && (ragDocuments$ | async) as documents; else documentsLoading">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">Recent News Documents</h3>
+        <p class="text-sm text-gray-600">Latest news articles processed by RAG system</p>
+      </div>
+      <div class="p-6 space-y-3 max-h-96 overflow-y-auto">
+        <div *ngFor="let doc of documents.slice(0, 8)" class="flex items-start justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+          <div class="flex-1">
+            <div class="flex items-center mb-2">
+              <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full mr-2" [class]="getCategoryColor(doc.category)">
+                {{ doc.category | titlecase }}
+              </span>
+              <span class="text-xs text-gray-500">{{ doc.timestamp | date:'short' }}</span>
+            </div>
+            <a *ngIf="doc.url" [href]="doc.url" target="_blank" rel="noopener noreferrer" class="group">
+              <h4 class="text-sm font-medium text-gray-900 mb-1 group-hover:text-blue-600 transition-colors flex items-center">
+                {{ doc.title }}
+                <svg class="w-3 h-3 ml-1 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+              </h4>
+            </a>
+            <h4 *ngIf="!doc.url" class="text-sm font-medium text-gray-900 mb-1">{{ doc.title }}</h4>
+            <p class="text-sm text-gray-600 mb-2">{{ doc.content.substring(0, 100) }}...</p>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xs text-gray-500">Source:</span>
+              <span class="text-xs font-medium text-blue-600">{{ doc.source }}</span>
+              <a *ngIf="doc.url" [href]="doc.url" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-600 hover:text-blue-800 underline flex items-center">
+                View Article
+                <svg class="w-3 h-3 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+              </a>
+            </div>
+            <div class="flex flex-wrap gap-1">
+              <span *ngFor="let tag of doc.tags.slice(0, 3)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full" [class]="getTagColor(tag)">
+                {{ tag }}
+              </span>
+            </div>
+          </div>
+          <div class="text-right ml-3">
+            <div class="text-sm font-medium text-gray-900">{{ formatPercent(doc.similarity_score || 0) }}</div>
+            <div class="text-xs text-gray-500">Similarity</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sector Loading Templates -->
+  <ng-template #technologyLoading>
+    <div class="metric-card-enhanced">
+      <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-blue-100">
+        <div class="flex items-center">
+          <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
+            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+          </div>
+          <div>
+            <h3 class="text-lg font-medium text-gray-900">Technology</h3>
+            <p class="text-sm text-gray-600">Loading analysis...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #financeLoading>
+    <div class="metric-card-enhanced">
+      <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-green-50 to-green-100">
+        <div class="flex items-center">
+          <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center mr-3">
+            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+          </div>
+          <div>
+            <h3 class="text-lg font-medium text-gray-900">Finance</h3>
+            <p class="text-sm text-gray-600">Loading analysis...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #healthcareLoading>
+    <div class="metric-card-enhanced">
+      <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-red-50 to-red-100">
+        <div class="flex items-center">
+          <div class="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center mr-3">
+            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+          </div>
+          <div>
+            <h3 class="text-lg font-medium text-gray-900">Healthcare</h3>
+            <p class="text-sm text-gray-600">Loading analysis...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #retailLoading>
+    <div class="metric-card-enhanced">
+      <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-purple-100">
+        <div class="flex items-center">
+          <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center mr-3">
+            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+          </div>
+          <div>
+            <h3 class="text-lg font-medium text-gray-900">Retail</h3>
+            <p class="text-sm text-gray-600">Loading analysis...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- RAG Analysis Loading Template -->
+  <ng-template #analysisLoading>
+    <div class="metric-card-enhanced">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="h-6 bg-gray-300 rounded animate-pulse mb-2"></div>
+        <div class="h-4 bg-gray-300 rounded animate-pulse"></div>
+      </div>
+      <div class="p-6 space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="h-4 bg-gray-300 rounded animate-pulse w-16"></div>
+          <div class="h-4 bg-gray-300 rounded animate-pulse w-24"></div>
+        </div>
+        <div class="flex items-center justify-between">
+          <div class="h-4 bg-gray-300 rounded animate-pulse w-20"></div>
+          <div class="h-4 bg-gray-300 rounded animate-pulse w-12"></div>
+        </div>
+        <div class="flex items-center justify-between">
+          <div class="h-4 bg-gray-300 rounded animate-pulse w-24"></div>
+          <div class="h-4 bg-gray-300 rounded animate-pulse w-8"></div>
+        </div>
+        <div class="mt-4">
+          <div class="h-4 bg-gray-300 rounded animate-pulse mb-2 w-32"></div>
+          <div class="h-20 bg-gray-300 rounded animate-pulse"></div>
+        </div>
+        <div class="mt-4">
+          <div class="h-4 bg-gray-300 rounded animate-pulse mb-2 w-20"></div>
+          <div class="h-4 bg-gray-300 rounded animate-pulse"></div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Documents Loading Template -->
+  <ng-template #documentsLoading>
+    <div class="metric-card-enhanced">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="h-6 bg-gray-300 rounded animate-pulse mb-2"></div>
+        <div class="h-4 bg-gray-300 rounded animate-pulse"></div>
+      </div>
+      <div class="p-6 space-y-3 max-h-96 overflow-y-auto">
+        <div *ngFor="let i of [1,2,3,4,5,6]" class="flex items-start justify-between p-3 bg-gray-50 rounded-lg">
+          <div class="flex-1">
+            <div class="flex items-center mb-2">
+              <div class="h-6 bg-gray-300 rounded animate-pulse mr-2 w-16"></div>
+              <div class="h-4 bg-gray-300 rounded animate-pulse w-20"></div>
+            </div>
+            <div class="h-4 bg-gray-300 rounded animate-pulse mb-1 w-full"></div>
+            <div class="h-4 bg-gray-300 rounded animate-pulse mb-2 w-3/4"></div>
+            <div class="flex flex-wrap gap-1">
+              <div class="h-6 bg-gray-300 rounded animate-pulse w-12"></div>
+              <div class="h-6 bg-gray-300 rounded animate-pulse w-16"></div>
+            </div>
+          </div>
+          <div class="text-right ml-3">
+            <div class="h-4 bg-gray-300 rounded animate-pulse w-8 mb-1"></div>
+            <div class="h-3 bg-gray-300 rounded animate-pulse w-12"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- RAG Performance Metrics -->
+  <div class="metric-card-enhanced" *ngIf="!isLoadingPerformance && (ragPerformance$ | async) as performance; else performanceLoading">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">RAG Performance Metrics</h3>
+      <p class="text-sm text-gray-600">Comprehensive performance analysis and system health</p>
+    </div>
+    <div class="p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- RAG Metrics -->
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-gray-900">RAG Metrics</h4>
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600">Queries Processed</span>
+              <span class="text-sm font-medium">{{ formatNumber(performance.metrics.query_processing_rate.value) }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600">Response Time</span>
+              <span class="text-sm font-medium">{{ (performance.metrics.avg_response_time.value / 1000).toFixed(1) }}s</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600">Retrieval Accuracy</span>
+              <span class="text-sm font-medium">{{ formatPercent(performance.metrics.document_retrieval_success.value) }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600">LLM Quality</span>
+              <span class="text-sm font-medium">{{ formatPercent(performance.metrics.rag_accuracy.value) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- News Ingestion -->
+        <div class="space-y-3" *ngIf="ragEventAgentSummary$ | async as summary">
+          <h4 class="text-sm font-medium text-gray-900">News Ingestion</h4>
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600">Sources Monitored</span>
+              <span class="text-sm font-medium">{{ summary.active_sources }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600">Articles Today</span>
+              <span class="text-sm font-medium">{{ summary.total_documents }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600">Duplicate Detection</span>
+              <span class="text-sm font-medium">{{ formatPercent(0.95) }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600">Content Quality</span>
+              <span class="text-sm font-medium">{{ formatPercent(summary.rag_accuracy) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- LLM Integration -->
+        <div class="space-y-3" *ngIf="ragEventAgentSummary$ | async as summary">
+          <h4 class="text-sm font-medium text-gray-900">LLM Integration</h4>
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600">LLM Enabled</span>
+              <span class="text-sm font-medium" [class]="summary.llm_enabled ? 'text-green-600' : 'text-red-600'">
+                {{ summary.llm_enabled ? 'Yes' : 'No' }}
+              </span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600">Response Time</span>
+              <span class="text-sm font-medium">{{ (summary.avg_response_time / 1000).toFixed(1) }}s</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600">Accuracy Score</span>
+              <span class="text-sm font-medium">{{ formatPercent(performance.metrics.llm_confidence_score.value) }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600">Fallback Rate</span>
+              <span class="text-sm font-medium">{{ formatPercent(0.05) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vector Database -->
+        <div class="space-y-3" *ngIf="ragEventAgentSummary$ | async as summary">
+          <h4 class="text-sm font-medium text-gray-900">Vector Database</h4>
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600">Total Embeddings</span>
+              <span class="text-sm font-medium">{{ formatNumber(summary.vector_db_size) }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600">Dimension</span>
+              <span class="text-sm font-medium">384</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600">Search Accuracy</span>
+              <span class="text-sm font-medium">{{ formatPercent(performance.metrics.document_retrieval_success.value) }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600">Update Frequency</span>
+              <span class="text-sm font-medium">Real-time</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Analysis -->
+      <div class="mt-6" *ngIf="ragDocuments$ | async as documents">
+        <h4 class="text-sm font-medium text-gray-900 mb-3">Category Analysis</h4>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div *ngFor="let category of getCategoryCounts(documents)" class="text-center p-3 bg-gray-50 rounded-lg">
+            <div class="text-lg font-semibold text-gray-900">{{ category.count }}</div>
+            <div class="text-xs text-gray-600">{{ category.name | titlecase }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Performance Loading Template -->
+  <ng-template #performanceLoading>
+    <div class="metric-card-enhanced">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="h-6 bg-gray-300 rounded animate-pulse mb-2"></div>
+        <div class="h-4 bg-gray-300 rounded animate-pulse"></div>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="space-y-3" *ngFor="let i of [1,2,3,4]">
+            <div class="h-5 bg-gray-300 rounded animate-pulse"></div>
+            <div class="space-y-2">
+              <div class="flex justify-between">
+                <div class="h-4 bg-gray-300 rounded animate-pulse w-24"></div>
+                <div class="h-4 bg-gray-300 rounded animate-pulse w-16"></div>
+              </div>
+              <div class="flex justify-between">
+                <div class="h-4 bg-gray-300 rounded animate-pulse w-20"></div>
+                <div class="h-4 bg-gray-300 rounded animate-pulse w-12"></div>
+              </div>
+              <div class="flex justify-between">
+                <div class="h-4 bg-gray-300 rounded animate-pulse w-28"></div>
+                <div class="h-4 bg-gray-300 rounded animate-pulse w-14"></div>
+              </div>
+              <div class="flex justify-between">
+                <div class="h-4 bg-gray-300 rounded animate-pulse w-18"></div>
+                <div class="h-4 bg-gray-300 rounded animate-pulse w-10"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-6">
+          <div class="h-5 bg-gray-300 rounded animate-pulse mb-3 w-32"></div>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div *ngFor="let i of [1,2,3,4,5,6]" class="text-center p-3 bg-gray-50 rounded-lg">
+              <div class="h-6 bg-gray-300 rounded animate-pulse mb-1"></div>
+              <div class="h-4 bg-gray-300 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>

@@ -1,0 +1,110 @@
+/* Symbol Management Component Styles */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Custom scrollbar for tables */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 8px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Hover effects for interactive elements */
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Focus styles for accessibility */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Status badge animations */
+.px-2.py-1.text-xs.font-medium.rounded-full {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Priority bar animation */
+.bg-blue-600.h-2.rounded-full {
+  transition: width 0.3s ease-in-out;
+}
+
+/* Loading state styles */
+.disabled\:bg-gray-400:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Responsive table improvements */
+@media (max-width: 768px) {
+  .min-w-full {
+    min-width: 600px;
+  }
+}
+
+/* Custom spacing for form elements */
+.gap-4 > * + * {
+  margin-top: 0;
+}
+
+/* Enhanced button styles */
+.bg-blue-600 {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.bg-blue-600:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+}
+
+.bg-gray-600 {
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+}
+
+.bg-gray-600:hover {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+}
+
+/* Card shadow enhancements */
+.shadow {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.shadow:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}

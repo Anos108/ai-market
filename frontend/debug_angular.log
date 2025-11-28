@@ -1,0 +1,114 @@
+Warning: Running a server with --disable-host-check is a security risk. See https://medium.com/webpack/webpack-dev-server-middleware-security-issues-1489d950874a for more information.
+- Generating browser application bundles (phase: setup)...
+✔ Browser application bundle generation complete.
+
+Initial chunk files                                                           | Names                                                           |  Raw size
+vendor.js                                                                     | vendor                                                          |   3.04 MB | 
+polyfills.js                                                                  | polyfills                                                       | 262.58 kB | 
+styles.css, styles.js                                                         | styles                                                          | 197.15 kB | 
+main.js                                                                       | main                                                            |  50.33 kB | 
+runtime.js                                                                    | runtime                                                         |  12.63 kB | 
+
+                                                                              | Initial total                                                   |   3.55 MB
+
+Lazy chunk files                                                              | Names                                                           |  Raw size
+src_app_pages_forecasting-dashboard_forecasting-dashboard_component_ts.js     | pages-forecasting-dashboard-forecasting-dashboard-component     | 103.35 kB | 
+src_app_pages_trading-dashboard_trading-dashboard_component_ts.js             | pages-trading-dashboard-trading-dashboard-component             |  74.97 kB | 
+src_app_pages_symbol-management_symbol-management_component_ts.js             | pages-symbol-management-symbol-management-component             |  68.73 kB | 
+src_app_pages_ensemble-blender_ensemble-blender_component_ts.js               | pages-ensemble-blender-ensemble-blender-component               |  58.08 kB | 
+src_app_pages_rl-strategy-agent_rl-strategy-agent_component_ts.js             | pages-rl-strategy-agent-rl-strategy-agent-component             |  54.38 kB | 
+src_app_pages_latent-pattern-detector_latent-pattern-detector_component_ts.js | pages-latent-pattern-detector-latent-pattern-detector-component |  50.68 kB | 
+src_app_pages_meta-evaluation-agent_meta-evaluation-agent_component_ts.js     | pages-meta-evaluation-agent-meta-evaluation-agent-component     |  50.26 kB | 
+src_app_pages_rag-event-agent_rag-event-agent_component_ts.js                 | pages-rag-event-agent-rag-event-agent-component                 |  38.82 kB | 
+src_app_pages_agent-router_agent-router_component_ts.js                       | pages-agent-router-agent-router-component                       |  37.57 kB | 
+src_app_pages_agent-monitor_agent-monitor_component_ts.js                     | pages-agent-monitor-agent-monitor-component                     |  34.90 kB | 
+src_app_pages_portfolio_portfolio_component_ts.js                             | pages-portfolio-portfolio-component                             |  30.76 kB | 
+src_app_pages_reports_reports_component_ts.js                                 | pages-reports-reports-component                                 |  29.88 kB | 
+src_app_pages_settings_settings_component_ts.js                               | pages-settings-settings-component                               |  23.89 kB | 
+src_app_pages_analytics_analytics_component_ts.js                             | pages-analytics-analytics-component                             |  23.62 kB | 
+src_app_pages_ticker-discovery_ticker-discovery_component_ts.js               | pages-ticker-discovery-ticker-discovery-component               |  23.26 kB | 
+src_app_pages_system-status_system-status_component_ts.js                     | pages-system-status-system-status-component                     |  22.91 kB | 
+src_app_pages_predictions_predictions_component_ts.js                         | pages-predictions-predictions-component                         |  22.44 kB | 
+src_app_pages_ab-testing_ab-testing_component_ts.js                           | pages-ab-testing-ab-testing-component                           |  21.07 kB | 
+src_app_pages_risk-analysis_risk-analysis_component_ts.js                     | pages-risk-analysis-risk-analysis-component                     |  20.72 kB | 
+src_app_pages_agents_agents_component_ts.js                                   | pages-agents-agents-component                                   |  19.72 kB | 
+src_app_pages_dashboard_dashboard_component_ts.js                             | pages-dashboard-dashboard-component                             |  18.14 kB | 
+src_app_pages_execution-agent_execution-agent_component_ts.js                 | pages-execution-agent-execution-agent-component                 |  13.91 kB | 
+
+Build at: 2025-09-26T19:19:07.877Z - Hash: 6a575bb8581b7048 - Time: 2665ms
+
+** Angular Live Development Server is listening on 0.0.0.0:4200, open your browser on http://localhost:4200/ **
+
+
+✔ Compiled successfully.
+✔ Browser application bundle generation complete.
+
+Initial chunk files                               | Names                               | Raw size
+runtime.js                                        | runtime                             | 12.63 kB | 
+
+Lazy chunk files                                  | Names                               | Raw size
+src_app_pages_portfolio_portfolio_component_ts.js | pages-portfolio-portfolio-component | 31.80 kB | 
+
+25 unchanged chunks
+
+Build at: 2025-09-26T19:19:09.430Z - Hash: 17fff9d57c09582a - Time: 1484ms
+
+✔ Compiled successfully.
+✔ Browser application bundle generation complete.
+
+Initial chunk files                               | Names                               | Raw size
+main.js                                           | main                                | 50.33 kB | 
+runtime.js                                        | runtime                             | 12.63 kB | 
+
+Lazy chunk files                                  | Names                               | Raw size
+src_app_pages_portfolio_portfolio_component_ts.js | pages-portfolio-portfolio-component |  9.26 kB | 
+
+24 unchanged chunks
+
+Build at: 2025-09-26T19:19:15.022Z - Hash: 18700adcb7442846 - Time: 268ms
+
+./src/app/pages/portfolio/portfolio.component.ts - Error: Module build failed (from ./node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js):
+SyntaxError: /Users/ethika-bao/Documents/WORKSPACES/projects/ai-market/market-ai-system/frontend/src/app/pages/portfolio/portfolio.component.ts: Unexpected token (234:41)
+
+  232 |                 <div *ngFor="let holding of portfolio.holdings" class="bg-yellow-100 p-2 mb-2 rounded">
+  233 |                   <p><strong>{{ holding.symbol || 'UNKNOWN SYMBOL' }}</strong></p>
+> 234 |                   <p>Price: ${{ holding, : .current_price || 'N/A' }}</p>
+      |                                          ^
+  235 |                 </div>
+  236 |               </div>
+  237 |               <div *ngIf="!portfolio" class="p-4 bg-red-100">
+
+Error: src/app/pages/portfolio/portfolio.component.ts:10:13 - error NG1010: template must be a string
+  Value could not be determined statically.
+
+ 10   template: `
+                ~
+ 11     <div class="space-y-6 max-w-7xl mx-auto">
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+... 
+242     </div>
+    ~~~~~~~~~~
+243   `,
+    ~~~
+
+  src/app/pages/portfolio/portfolio.component.ts:191:31
+    191                   <p>Price: ${{ holding.current_price || 'N/A' }}</p>
+                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    A string value could not be determined statically.
+
+
+Error: src/app/pages/portfolio/portfolio.component.ts:191:33 - error TS18004: No value exists in scope for the shorthand property 'holding'. Either declare one or provide an initializer.
+
+191                   <p>Price: ${{ holding.current_price || 'N/A' }}</p>
+                                    ~~~~~~~
+
+
+Error: src/app/pages/portfolio/portfolio.component.ts:191:40 - error TS1005: ',' expected.
+
+191                   <p>Price: ${{ holding.current_price || 'N/A' }}</p>
+                                           ~
+
+
+
+
+✖ Failed to compile.

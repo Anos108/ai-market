@@ -1,0 +1,374 @@
+Warning: Running a server with --disable-host-check is a security risk. See https://medium.com/webpack/webpack-dev-server-middleware-security-issues-1489d950874a for more information.
+- Generating browser application bundles (phase: setup)...
+✔ Browser application bundle generation complete.
+
+Initial chunk files                                                           | Names                                                           |  Raw size
+vendor.js                                                                     | vendor                                                          |   3.04 MB | 
+polyfills.js                                                                  | polyfills                                                       | 262.58 kB | 
+styles.css, styles.js                                                         | styles                                                          | 200.48 kB | 
+main.js                                                                       | main                                                            |  69.76 kB | 
+runtime.js                                                                    | runtime                                                         |  12.63 kB | 
+
+                                                                              | Initial total                                                   |   3.57 MB
+
+Lazy chunk files                                                              | Names                                                           |  Raw size
+src_app_pages_forecasting-dashboard_forecasting-dashboard_component_ts.js     | pages-forecasting-dashboard-forecasting-dashboard-component     | 103.49 kB | 
+src_app_pages_trading-dashboard_trading-dashboard_component_ts.js             | pages-trading-dashboard-trading-dashboard-component             |  74.97 kB | 
+src_app_pages_symbol-management_symbol-management_component_ts.js             | pages-symbol-management-symbol-management-component             |  69.55 kB | 
+src_app_pages_ensemble-blender_ensemble-blender_component_ts.js               | pages-ensemble-blender-ensemble-blender-component               |  58.08 kB | 
+src_app_pages_rl-strategy-agent_rl-strategy-agent_component_ts.js             | pages-rl-strategy-agent-rl-strategy-agent-component             |  54.38 kB | 
+src_app_pages_latent-pattern-detector_latent-pattern-detector_component_ts.js | pages-latent-pattern-detector-latent-pattern-detector-component |  50.68 kB | 
+src_app_pages_meta-evaluation-agent_meta-evaluation-agent_component_ts.js     | pages-meta-evaluation-agent-meta-evaluation-agent-component     |  50.26 kB | 
+src_app_pages_ticker-discovery_ticker-discovery_component_ts.js               | pages-ticker-discovery-ticker-discovery-component               |  44.37 kB | 
+src_app_pages_rag-event-agent_rag-event-agent_component_ts.js                 | pages-rag-event-agent-rag-event-agent-component                 |  38.82 kB | 
+src_app_pages_agent-router_agent-router_component_ts.js                       | pages-agent-router-agent-router-component                       |  37.57 kB | 
+src_app_pages_agent-monitor_agent-monitor_component_ts.js                     | pages-agent-monitor-agent-monitor-component                     |  34.90 kB | 
+src_app_pages_reports_reports_component_ts.js                                 | pages-reports-reports-component                                 |  30.31 kB | 
+src_app_pages_portfolio_portfolio_component_ts.js                             | pages-portfolio-portfolio-component                             |  30.09 kB | 
+src_app_pages_settings_settings_component_ts.js                               | pages-settings-settings-component                               |  23.89 kB | 
+src_app_pages_analytics_analytics_component_ts.js                             | pages-analytics-analytics-component                             |  23.62 kB | 
+src_app_pages_system-status_system-status_component_ts.js                     | pages-system-status-system-status-component                     |  22.91 kB | 
+src_app_pages_predictions_predictions_component_ts.js                         | pages-predictions-predictions-component                         |  22.44 kB | 
+src_app_pages_ab-testing_ab-testing_component_ts.js                           | pages-ab-testing-ab-testing-component                           |  21.07 kB | 
+src_app_pages_risk-analysis_risk-analysis_component_ts.js                     | pages-risk-analysis-risk-analysis-component                     |  20.72 kB | 
+src_app_pages_agents_agents_component_ts.js                                   | pages-agents-agents-component                                   |  19.72 kB | 
+src_app_pages_dashboard_dashboard_component_ts.js                             | pages-dashboard-dashboard-component                             |  18.14 kB | 
+src_app_pages_execution-agent_execution-agent_component_ts.js                 | pages-execution-agent-execution-agent-component                 |  13.91 kB | 
+
+Build at: 2025-09-26T22:30:02.311Z - Hash: 57967c1699899d72 - Time: 2622ms
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:109:87 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+109               <p class="text-sm font-semibold text-amber-600">{{ ((portfolio.summary?.cash_balance || 0) / (portfolio.summary?.total_value || 1) * 100).toFixed(1) }}%</p>
+                                                                                          ~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:109:128 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+109               <p class="text-sm font-semibold text-amber-600">{{ ((portfolio.summary?.cash_balance || 0) / (portfolio.summary?.total_value || 1) * 100).toFixed(1) }}%</p>
+                                                                                                                                   ~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:135:97 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+135                 <span class="font-semibold" [class]="getPnlClass(portfolio.performance_metrics?.daily_return)">
+                                                                                                    ~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:136:67 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+136                   {{ formatPercent(portfolio.performance_metrics?.daily_return) }}
+                                                                      ~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:141:97 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+141                 <span class="font-semibold" [class]="getPnlClass(portfolio.performance_metrics?.weekly_return)">
+                                                                                                    ~~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:142:67 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+142                   {{ formatPercent(portfolio.performance_metrics?.weekly_return) }}
+                                                                      ~~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:147:97 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+147                 <span class="font-semibold" [class]="getPnlClass(portfolio.performance_metrics?.monthly_return)">
+                                                                                                    ~~~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:148:67 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+148                   {{ formatPercent(portfolio.performance_metrics?.monthly_return) }}
+                                                                      ~~~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:153:97 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+153                 <span class="font-semibold" [class]="getPnlClass(portfolio.performance_metrics?.ytd_return)">
+                                                                                                    ~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:154:67 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+154                   {{ formatPercent(portfolio.performance_metrics?.ytd_return) }}
+                                                                      ~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:159:94 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+159                 <span class="font-semibold text-gray-700">{{ (portfolio.performance_metrics?.sharpe_ratio || 0).toFixed(2) }}</span>
+                                                                                                 ~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:163:94 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+163                 <span class="font-semibold text-gray-700">{{ (portfolio.performance_metrics?.volatility || 0).toFixed(1) }}%</span>
+                                                                                                 ~~~~~~~~~~
+
+
+
+
+** Angular Live Development Server is listening on 0.0.0.0:4200, open your browser on http://localhost:4200/ **
+
+
+✔ Compiled successfully.
+✔ Browser application bundle generation complete.
+
+
+
+27 unchanged chunks
+
+Build at: 2025-09-26T22:30:02.854Z - Hash: 57967c1699899d72 - Time: 484ms
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:109:87 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+109               <p class="text-sm font-semibold text-amber-600">{{ ((portfolio.summary?.cash_balance || 0) / (portfolio.summary?.total_value || 1) * 100).toFixed(1) }}%</p>
+                                                                                          ~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:109:128 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+109               <p class="text-sm font-semibold text-amber-600">{{ ((portfolio.summary?.cash_balance || 0) / (portfolio.summary?.total_value || 1) * 100).toFixed(1) }}%</p>
+                                                                                                                                   ~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:135:97 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+135                 <span class="font-semibold" [class]="getPnlClass(portfolio.performance_metrics?.daily_return)">
+                                                                                                    ~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:136:67 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+136                   {{ formatPercent(portfolio.performance_metrics?.daily_return) }}
+                                                                      ~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:141:97 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+141                 <span class="font-semibold" [class]="getPnlClass(portfolio.performance_metrics?.weekly_return)">
+                                                                                                    ~~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:142:67 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+142                   {{ formatPercent(portfolio.performance_metrics?.weekly_return) }}
+                                                                      ~~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:147:97 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+147                 <span class="font-semibold" [class]="getPnlClass(portfolio.performance_metrics?.monthly_return)">
+                                                                                                    ~~~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:148:67 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+148                   {{ formatPercent(portfolio.performance_metrics?.monthly_return) }}
+                                                                      ~~~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:153:97 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+153                 <span class="font-semibold" [class]="getPnlClass(portfolio.performance_metrics?.ytd_return)">
+                                                                                                    ~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:154:67 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+154                   {{ formatPercent(portfolio.performance_metrics?.ytd_return) }}
+                                                                      ~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:159:94 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+159                 <span class="font-semibold text-gray-700">{{ (portfolio.performance_metrics?.sharpe_ratio || 0).toFixed(2) }}</span>
+                                                                                                 ~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:163:94 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+163                 <span class="font-semibold text-gray-700">{{ (portfolio.performance_metrics?.volatility || 0).toFixed(1) }}%</span>
+                                                                                                 ~~~~~~~~~~
+
+
+
+
+✔ Compiled successfully.
+✔ Browser application bundle generation complete.
+
+Initial chunk files                                                       | Names                                                       |  Raw size
+runtime.js                                                                | runtime                                                     |  12.63 kB | 
+
+Lazy chunk files                                                          | Names                                                       |  Raw size
+src_app_pages_forecasting-dashboard_forecasting-dashboard_component_ts.js | pages-forecasting-dashboard-forecasting-dashboard-component | 103.67 kB | 
+
+25 unchanged chunks
+
+Build at: 2025-09-26T22:31:48.458Z - Hash: 9f984f10c1fd711a - Time: 1527ms
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:109:87 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+109               <p class="text-sm font-semibold text-amber-600">{{ ((portfolio.summary?.cash_balance || 0) / (portfolio.summary?.total_value || 1) * 100).toFixed(1) }}%</p>
+                                                                                          ~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:109:128 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+109               <p class="text-sm font-semibold text-amber-600">{{ ((portfolio.summary?.cash_balance || 0) / (portfolio.summary?.total_value || 1) * 100).toFixed(1) }}%</p>
+                                                                                                                                   ~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:135:97 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+135                 <span class="font-semibold" [class]="getPnlClass(portfolio.performance_metrics?.daily_return)">
+                                                                                                    ~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:136:67 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+136                   {{ formatPercent(portfolio.performance_metrics?.daily_return) }}
+                                                                      ~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:141:97 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+141                 <span class="font-semibold" [class]="getPnlClass(portfolio.performance_metrics?.weekly_return)">
+                                                                                                    ~~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:142:67 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+142                   {{ formatPercent(portfolio.performance_metrics?.weekly_return) }}
+                                                                      ~~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:147:97 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+147                 <span class="font-semibold" [class]="getPnlClass(portfolio.performance_metrics?.monthly_return)">
+                                                                                                    ~~~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:148:67 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+148                   {{ formatPercent(portfolio.performance_metrics?.monthly_return) }}
+                                                                      ~~~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:153:97 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+153                 <span class="font-semibold" [class]="getPnlClass(portfolio.performance_metrics?.ytd_return)">
+                                                                                                    ~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:154:67 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+154                   {{ formatPercent(portfolio.performance_metrics?.ytd_return) }}
+                                                                      ~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:159:94 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+159                 <span class="font-semibold text-gray-700">{{ (portfolio.performance_metrics?.sharpe_ratio || 0).toFixed(2) }}</span>
+                                                                                                 ~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:163:94 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+163                 <span class="font-semibold text-gray-700">{{ (portfolio.performance_metrics?.volatility || 0).toFixed(1) }}%</span>
+                                                                                                 ~~~~~~~~~~
+
+
+
+
+✔ Compiled successfully.
+✔ Browser application bundle generation complete.
+
+Initial chunk files                                                       | Names                                                       |  Raw size
+runtime.js                                                                | runtime                                                     |  12.63 kB | 
+
+Lazy chunk files                                                          | Names                                                       |  Raw size
+src_app_pages_forecasting-dashboard_forecasting-dashboard_component_ts.js | pages-forecasting-dashboard-forecasting-dashboard-component | 103.78 kB | 
+
+25 unchanged chunks
+
+Build at: 2025-09-26T22:31:51.814Z - Hash: 401e48f692744521 - Time: 559ms
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:109:87 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+109               <p class="text-sm font-semibold text-amber-600">{{ ((portfolio.summary?.cash_balance || 0) / (portfolio.summary?.total_value || 1) * 100).toFixed(1) }}%</p>
+                                                                                          ~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:109:128 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+109               <p class="text-sm font-semibold text-amber-600">{{ ((portfolio.summary?.cash_balance || 0) / (portfolio.summary?.total_value || 1) * 100).toFixed(1) }}%</p>
+                                                                                                                                   ~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:135:97 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+135                 <span class="font-semibold" [class]="getPnlClass(portfolio.performance_metrics?.daily_return)">
+                                                                                                    ~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:136:67 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+136                   {{ formatPercent(portfolio.performance_metrics?.daily_return) }}
+                                                                      ~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:141:97 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+141                 <span class="font-semibold" [class]="getPnlClass(portfolio.performance_metrics?.weekly_return)">
+                                                                                                    ~~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:142:67 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+142                   {{ formatPercent(portfolio.performance_metrics?.weekly_return) }}
+                                                                      ~~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:147:97 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+147                 <span class="font-semibold" [class]="getPnlClass(portfolio.performance_metrics?.monthly_return)">
+                                                                                                    ~~~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:148:67 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+148                   {{ formatPercent(portfolio.performance_metrics?.monthly_return) }}
+                                                                      ~~~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:153:97 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+153                 <span class="font-semibold" [class]="getPnlClass(portfolio.performance_metrics?.ytd_return)">
+                                                                                                    ~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:154:67 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+154                   {{ formatPercent(portfolio.performance_metrics?.ytd_return) }}
+                                                                      ~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:159:94 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+159                 <span class="font-semibold text-gray-700">{{ (portfolio.performance_metrics?.sharpe_ratio || 0).toFixed(2) }}</span>
+                                                                                                 ~~~~~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:163:94 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+163                 <span class="font-semibold text-gray-700">{{ (portfolio.performance_metrics?.volatility || 0).toFixed(1) }}%</span>
+                                                                                                 ~~~~~~~~~~
+
+
+
+
+✔ Compiled successfully.

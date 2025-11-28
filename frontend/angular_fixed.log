@@ -1,0 +1,175 @@
+Warning: Running a server with --disable-host-check is a security risk. See https://medium.com/webpack/webpack-dev-server-middleware-security-issues-1489d950874a for more information.
+- Generating browser application bundles (phase: setup)...
+✔ Browser application bundle generation complete.
+
+Initial chunk files                                                           | Names                                                           |  Raw size
+vendor.js                                                                     | vendor                                                          |   3.04 MB | 
+polyfills.js                                                                  | polyfills                                                       | 262.58 kB | 
+styles.css, styles.js                                                         | styles                                                          | 197.15 kB | 
+main.js                                                                       | main                                                            |  50.33 kB | 
+runtime.js                                                                    | runtime                                                         |  12.63 kB | 
+
+                                                                              | Initial total                                                   |   3.55 MB
+
+Lazy chunk files                                                              | Names                                                           |  Raw size
+src_app_pages_forecasting-dashboard_forecasting-dashboard_component_ts.js     | pages-forecasting-dashboard-forecasting-dashboard-component     | 103.35 kB | 
+src_app_pages_trading-dashboard_trading-dashboard_component_ts.js             | pages-trading-dashboard-trading-dashboard-component             |  74.97 kB | 
+src_app_pages_symbol-management_symbol-management_component_ts.js             | pages-symbol-management-symbol-management-component             |  68.73 kB | 
+src_app_pages_ensemble-blender_ensemble-blender_component_ts.js               | pages-ensemble-blender-ensemble-blender-component               |  58.08 kB | 
+src_app_pages_rl-strategy-agent_rl-strategy-agent_component_ts.js             | pages-rl-strategy-agent-rl-strategy-agent-component             |  54.38 kB | 
+src_app_pages_latent-pattern-detector_latent-pattern-detector_component_ts.js | pages-latent-pattern-detector-latent-pattern-detector-component |  50.68 kB | 
+src_app_pages_meta-evaluation-agent_meta-evaluation-agent_component_ts.js     | pages-meta-evaluation-agent-meta-evaluation-agent-component     |  50.26 kB | 
+src_app_pages_rag-event-agent_rag-event-agent_component_ts.js                 | pages-rag-event-agent-rag-event-agent-component                 |  38.82 kB | 
+src_app_pages_agent-router_agent-router_component_ts.js                       | pages-agent-router-agent-router-component                       |  37.57 kB | 
+src_app_pages_agent-monitor_agent-monitor_component_ts.js                     | pages-agent-monitor-agent-monitor-component                     |  34.90 kB | 
+src_app_pages_portfolio_portfolio_component_ts.js                             | pages-portfolio-portfolio-component                             |  30.48 kB | 
+src_app_pages_reports_reports_component_ts.js                                 | pages-reports-reports-component                                 |  29.88 kB | 
+src_app_pages_settings_settings_component_ts.js                               | pages-settings-settings-component                               |  23.89 kB | 
+src_app_pages_analytics_analytics_component_ts.js                             | pages-analytics-analytics-component                             |  23.62 kB | 
+src_app_pages_ticker-discovery_ticker-discovery_component_ts.js               | pages-ticker-discovery-ticker-discovery-component               |  23.26 kB | 
+src_app_pages_system-status_system-status_component_ts.js                     | pages-system-status-system-status-component                     |  22.91 kB | 
+src_app_pages_predictions_predictions_component_ts.js                         | pages-predictions-predictions-component                         |  22.44 kB | 
+src_app_pages_ab-testing_ab-testing_component_ts.js                           | pages-ab-testing-ab-testing-component                           |  21.07 kB | 
+src_app_pages_risk-analysis_risk-analysis_component_ts.js                     | pages-risk-analysis-risk-analysis-component                     |  20.72 kB | 
+src_app_pages_agents_agents_component_ts.js                                   | pages-agents-agents-component                                   |  19.72 kB | 
+src_app_pages_dashboard_dashboard_component_ts.js                             | pages-dashboard-dashboard-component                             |  18.14 kB | 
+src_app_pages_execution-agent_execution-agent_component_ts.js                 | pages-execution-agent-execution-agent-component                 |  13.91 kB | 
+
+Build at: 2025-09-26T19:14:35.143Z - Hash: aef6856a68680f20 - Time: 2775ms
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:194:86 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+194                       <span class="text-white text-xs font-bold">{{ (holding.symbol?.length > 4 ? holding.symbol.substring(0, 4) : holding.symbol) }}</span>
+                                                                                         ~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:212:104 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+212                           <span class="font-medium">{{ (holding.quantity || 0).toFixed(holding.symbol?.includes('-USD') ? 6 : 0) }} {{ holding.symbol?.includes('-USD') ? 'coins' : 'shares' }}</span>
+                                                                                                           ~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:212:152 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+212                           <span class="font-medium">{{ (holding.quantity || 0).toFixed(holding.symbol?.includes('-USD') ? 6 : 0) }} {{ holding.symbol?.includes('-USD') ? 'coins' : 'shares' }}</span>
+                                                                                                                                                           ~~~~~~~~
+
+
+
+
+Error: src/app/pages/portfolio/portfolio.component.ts:194:70 - error TS2532: Object is possibly 'undefined'.
+
+194                       <span class="text-white text-xs font-bold">{{ (holding.symbol?.length > 4 ? holding.symbol.substring(0, 4) : holding.symbol) }}</span>
+                                                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+** Angular Live Development Server is listening on 0.0.0.0:4200, open your browser on http://localhost:4200/ **
+
+
+✖ Failed to compile.
+✔ Browser application bundle generation complete.
+
+
+
+27 unchanged chunks
+
+Build at: 2025-09-26T19:14:35.655Z - Hash: aef6856a68680f20 - Time: 450ms
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:194:86 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+194                       <span class="text-white text-xs font-bold">{{ (holding.symbol?.length > 4 ? holding.symbol.substring(0, 4) : holding.symbol) }}</span>
+                                                                                         ~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:212:104 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+212                           <span class="font-medium">{{ (holding.quantity || 0).toFixed(holding.symbol?.includes('-USD') ? 6 : 0) }} {{ holding.symbol?.includes('-USD') ? 'coins' : 'shares' }}</span>
+                                                                                                           ~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:212:152 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+212                           <span class="font-medium">{{ (holding.quantity || 0).toFixed(holding.symbol?.includes('-USD') ? 6 : 0) }} {{ holding.symbol?.includes('-USD') ? 'coins' : 'shares' }}</span>
+                                                                                                                                                           ~~~~~~~~
+
+
+
+
+Error: src/app/pages/portfolio/portfolio.component.ts:194:70 - error TS2532: Object is possibly 'undefined'.
+
+194                       <span class="text-white text-xs font-bold">{{ (holding.symbol?.length > 4 ? holding.symbol.substring(0, 4) : holding.symbol) }}</span>
+                                                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+✖ Failed to compile.
+✔ Browser application bundle generation complete.
+
+Initial chunk files                               | Names                               | Raw size
+runtime.js                                        | runtime                             | 12.63 kB | 
+
+Lazy chunk files                                  | Names                               | Raw size
+src_app_pages_portfolio_portfolio_component_ts.js | pages-portfolio-portfolio-component | 30.48 kB | 
+
+25 unchanged chunks
+
+Build at: 2025-09-26T19:14:38.415Z - Hash: a14309e8794cf4b5 - Time: 811ms
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:212:104 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+212                           <span class="font-medium">{{ (holding.quantity || 0).toFixed(holding.symbol?.includes('-USD') ? 6 : 0) }} {{ holding.symbol?.includes('-USD') ? 'coins' : 'shares' }}</span>
+                                                                                                           ~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:212:152 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+212                           <span class="font-medium">{{ (holding.quantity || 0).toFixed(holding.symbol?.includes('-USD') ? 6 : 0) }} {{ holding.symbol?.includes('-USD') ? 'coins' : 'shares' }}</span>
+                                                                                                                                                           ~~~~~~~~
+
+
+
+
+✔ Compiled successfully.
+✔ Browser application bundle generation complete.
+
+Initial chunk files                               | Names                               | Raw size
+runtime.js                                        | runtime                             | 12.63 kB | 
+
+Lazy chunk files                                  | Names                               | Raw size
+src_app_pages_portfolio_portfolio_component_ts.js | pages-portfolio-portfolio-component | 30.49 kB | 
+
+25 unchanged chunks
+
+Build at: 2025-09-26T19:14:41.923Z - Hash: 61af88b75231da5b - Time: 335ms
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:212:104 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+212                           <span class="font-medium">{{ (holding.quantity || 0).toFixed(holding.symbol?.includes('-USD') ? 6 : 0) }} {{ holding.symbol?.includes('-USD') ? 'coins' : 'shares' }}</span>
+                                                                                                           ~~~~~~~~
+
+
+Warning: src/app/pages/portfolio/portfolio.component.ts:212:152 - warning NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator.
+
+212                           <span class="font-medium">{{ (holding.quantity || 0).toFixed(holding.symbol?.includes('-USD') ? 6 : 0) }} {{ holding.symbol?.includes('-USD') ? 'coins' : 'shares' }}</span>
+                                                                                                                                                           ~~~~~~~~
+
+
+
+
+✔ Compiled successfully.
+✔ Browser application bundle generation complete.
+
+Initial chunk files                               | Names                               | Raw size
+runtime.js                                        | runtime                             | 12.63 kB | 
+
+Lazy chunk files                                  | Names                               | Raw size
+src_app_pages_portfolio_portfolio_component_ts.js | pages-portfolio-portfolio-component | 30.46 kB | 
+
+25 unchanged chunks
+
+Build at: 2025-09-26T19:14:46.865Z - Hash: 5dbed688606dc0ae - Time: 300ms
+
+✔ Compiled successfully.

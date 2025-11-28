@@ -1,0 +1,3 @@
+# Ignore Angular cache
+.angular/cache/
+.angular/**/cache/

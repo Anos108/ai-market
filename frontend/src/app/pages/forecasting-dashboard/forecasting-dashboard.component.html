@@ -1,0 +1,1230 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <div class="bg-white shadow-sm border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-6">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Forecasting Dashboard</h1>
+          <p class="text-gray-600 mt-1">Day & Swing Trading Forecasts</p>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-2">
+            <span class="text-sm text-gray-600">Auto-refresh:</span>
+            <button 
+              (click)="toggleAutoRefresh()"
+              [class]="autoRefresh ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'"
+              class="px-3 py-1 rounded-md text-sm font-medium transition-colors">
+              {{ autoRefresh ? 'ON' : 'OFF' }}
+            </button>
+          </div>
+          <button 
+            (click)="loadAllData()"
+            [disabled]="isLoading"
+            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors">
+            <span *ngIf="isLoading">Loading...</span>
+            <span *ngIf="!isLoading">Refresh</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Alert -->
+  <div *ngIf="error" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+    <div class="bg-red-50 border border-red-200 rounded-md p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm text-red-800">{{ error }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Latest RAG Analysis Section -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-lg font-semibold text-gray-900">Latest Market Intelligence</h2>
+              <p class="text-sm text-gray-600">Real-time RAG analysis from news and market data</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs text-gray-500" *ngIf="latestRAGAnalysis && !isLoadingRAGAnalysis">
+              Updated {{ formatTimestamp(latestRAGAnalysis.last_updated) }}
+            </span>
+            <button 
+              (click)="loadLatestRAGAnalysis()"
+              [disabled]="isLoadingRAGAnalysis"
+              class="text-blue-600 hover:text-blue-700 disabled:text-gray-400 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- RAG Analysis Content -->
+      <div class="p-6">
+        <!-- Loading State -->
+        <div *ngIf="isLoadingRAGAnalysis" class="flex items-center justify-center py-8">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <span class="ml-3 text-gray-600">Loading market intelligence...</span>
+        </div>
+        
+        <!-- RAG Analysis Data -->
+        <div *ngIf="!isLoadingRAGAnalysis && latestRAGAnalysis && latestRAGAnalysis.success && latestRAGAnalysis.sector_analyses">
+          <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
+            <!-- Technology Sector -->
+            <div *ngIf="latestRAGAnalysis.sector_analyses.technology" 
+                 class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+              <div class="p-4">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center">
+                    <span class="text-lg mr-2">{{ getSectorIcon('technology') }}</span>
+                    <h3 class="font-semibold text-blue-900">Technology</h3>
+                  </div>
+                  <div class="flex items-center">
+                    <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                    <span class="text-xs text-blue-700">{{ formatTimestamp(latestRAGAnalysis.sector_analyses.technology.created_at) }}</span>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs text-blue-700">Confidence</span>
+                    <span class="text-sm font-semibold text-blue-900">{{ formatPercent(latestRAGAnalysis.sector_analyses.technology.confidence) }}</span>
+                  </div>
+                  <div class="w-full bg-blue-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full" 
+                         [style.width.%]="latestRAGAnalysis.sector_analyses.technology.confidence * 100"></div>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="text-xs text-blue-700 mb-1">Sources: {{ latestRAGAnalysis.sector_analyses.technology.source_count || 0 }}</div>
+                  <div class="text-sm text-blue-900 prose prose-sm max-w-none" 
+                       [class.line-clamp-3]="!isRAGSectorExpanded('technology')"
+                       [innerHTML]="formatMarkdown(latestRAGAnalysis.sector_analyses.technology.llm_response)">
+                  </div>
+                </div>
+                <button 
+                  (click)="toggleRAGSectorExpansion('technology')"
+                  class="w-full text-center text-xs text-blue-600 hover:text-blue-700 font-medium py-2 border-t border-blue-200 -mb-4 -mx-4 px-4 rounded-b-lg hover:bg-blue-50 transition-colors">
+                  {{ isRAGSectorExpanded('technology') ? '▲ Show Less' : '▼ Read More' }}
+                </button>
+              </div>
+            </div>
+            
+            <!-- Finance Sector -->
+            <div *ngIf="latestRAGAnalysis.sector_analyses.finance" 
+                 class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+              <div class="p-4">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center">
+                    <span class="text-lg mr-2">{{ getSectorIcon('finance') }}</span>
+                    <h3 class="font-semibold text-green-900">Finance</h3>
+                  </div>
+                  <div class="flex items-center">
+                    <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                    <span class="text-xs text-green-700">{{ formatTimestamp(latestRAGAnalysis.sector_analyses.finance.created_at) }}</span>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs text-green-700">Confidence</span>
+                    <span class="text-sm font-semibold text-green-900">{{ formatPercent(latestRAGAnalysis.sector_analyses.finance.confidence) }}</span>
+                  </div>
+                  <div class="w-full bg-green-200 rounded-full h-2">
+                    <div class="bg-green-600 h-2 rounded-full" 
+                         [style.width.%]="latestRAGAnalysis.sector_analyses.finance.confidence * 100"></div>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="text-xs text-green-700 mb-1">Sources: {{ latestRAGAnalysis.sector_analyses.finance.source_count || 0 }}</div>
+                  <div class="text-sm text-green-900 prose prose-sm max-w-none" 
+                       [class.line-clamp-3]="!isRAGSectorExpanded('finance')"
+                       [innerHTML]="formatMarkdown(latestRAGAnalysis.sector_analyses.finance.llm_response)">
+                  </div>
+                </div>
+                <button 
+                  (click)="toggleRAGSectorExpansion('finance')"
+                  class="w-full text-center text-xs text-green-600 hover:text-green-700 font-medium py-2 border-t border-green-200 -mb-4 -mx-4 px-4 rounded-b-lg hover:bg-green-50 transition-colors">
+                  {{ isRAGSectorExpanded('finance') ? '▲ Show Less' : '▼ Read More' }}
+                </button>
+              </div>
+            </div>
+            
+            <!-- Healthcare Sector -->
+            <div *ngIf="latestRAGAnalysis.sector_analyses.healthcare" 
+                 class="bg-gradient-to-br from-red-50 to-red-100 rounded-lg border border-red-200">
+              <div class="p-4">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center">
+                    <span class="text-lg mr-2">{{ getSectorIcon('healthcare') }}</span>
+                    <h3 class="font-semibold text-red-900">Healthcare</h3>
+                  </div>
+                  <div class="flex items-center">
+                    <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                    <span class="text-xs text-red-700">{{ formatTimestamp(latestRAGAnalysis.sector_analyses.healthcare.created_at) }}</span>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs text-red-700">Confidence</span>
+                    <span class="text-sm font-semibold text-red-900">{{ formatPercent(latestRAGAnalysis.sector_analyses.healthcare.confidence) }}</span>
+                  </div>
+                  <div class="w-full bg-red-200 rounded-full h-2">
+                    <div class="bg-red-600 h-2 rounded-full" 
+                         [style.width.%]="latestRAGAnalysis.sector_analyses.healthcare.confidence * 100"></div>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="text-xs text-red-700 mb-1">Sources: {{ latestRAGAnalysis.sector_analyses.healthcare.source_count || 0 }}</div>
+                  <div class="text-sm text-red-900 prose prose-sm max-w-none" 
+                       [class.line-clamp-3]="!isRAGSectorExpanded('healthcare')"
+                       [innerHTML]="formatMarkdown(latestRAGAnalysis.sector_analyses.healthcare.llm_response)">
+                  </div>
+                </div>
+                <button 
+                  (click)="toggleRAGSectorExpansion('healthcare')"
+                  class="w-full text-center text-xs text-red-600 hover:text-red-700 font-medium py-2 border-t border-red-200 -mb-4 -mx-4 px-4 rounded-b-lg hover:bg-red-50 transition-colors">
+                  {{ isRAGSectorExpanded('healthcare') ? '▲ Show Less' : '▼ Read More' }}
+                </button>
+              </div>
+            </div>
+            
+            <!-- Retail Sector -->
+            <div *ngIf="latestRAGAnalysis.sector_analyses.retail" 
+                 class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
+              <div class="p-4">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center">
+                    <span class="text-lg mr-2">{{ getSectorIcon('retail') }}</span>
+                    <h3 class="font-semibold text-purple-900">Retail</h3>
+                  </div>
+                  <div class="flex items-center">
+                    <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                    <span class="text-xs text-purple-700">{{ formatTimestamp(latestRAGAnalysis.sector_analyses.retail.created_at) }}</span>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs text-purple-700">Confidence</span>
+                    <span class="text-sm font-semibold text-purple-900">{{ formatPercent(latestRAGAnalysis.sector_analyses.retail.confidence) }}</span>
+                  </div>
+                  <div class="w-full bg-purple-200 rounded-full h-2">
+                    <div class="bg-purple-600 h-2 rounded-full" 
+                         [style.width.%]="latestRAGAnalysis.sector_analyses.retail.confidence * 100"></div>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="text-xs text-purple-700 mb-1">Sources: {{ latestRAGAnalysis.sector_analyses.retail.source_count || 0 }}</div>
+                  <div class="text-sm text-purple-900 prose prose-sm max-w-none" 
+                       [class.line-clamp-3]="!isRAGSectorExpanded('retail')"
+                       [innerHTML]="formatMarkdown(latestRAGAnalysis.sector_analyses.retail.llm_response)">
+                  </div>
+                </div>
+                <button 
+                  (click)="toggleRAGSectorExpansion('retail')"
+                  class="w-full text-center text-xs text-purple-600 hover:text-purple-700 font-medium py-2 border-t border-purple-200 -mb-4 -mx-4 px-4 rounded-b-lg hover:bg-purple-50 transition-colors">
+                  {{ isRAGSectorExpanded('retail') ? '▲ Show Less' : '▼ Read More' }}
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- No Data Message -->
+          <div *ngIf="!latestRAGAnalysis.sector_analyses.technology && !latestRAGAnalysis.sector_analyses.finance && !latestRAGAnalysis.sector_analyses.healthcare && !latestRAGAnalysis.sector_analyses.retail" 
+               class="text-center py-8">
+            <div class="text-gray-400 mb-2">
+              <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+              </svg>
+            </div>
+            <p class="text-gray-600">No recent market intelligence available</p>
+            <p class="text-sm text-gray-500">RAG analysis will appear here as new market data is processed</p>
+          </div>
+        </div>
+        
+        <!-- Error State -->
+        <div *ngIf="!isLoadingRAGAnalysis && (!latestRAGAnalysis || !latestRAGAnalysis.success)" 
+             class="text-center py-8">
+          <div class="text-red-400 mb-2">
+            <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <p class="text-red-600">Failed to load market intelligence</p>
+          <button 
+            (click)="loadLatestRAGAnalysis()"
+            class="mt-2 text-blue-600 hover:text-blue-700 text-sm">
+            Try again
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="border-b border-gray-200">
+      <nav class="-mb-px flex space-x-8">
+        <button 
+          (click)="setActiveTab('day-forecasts')"
+          [class]="activeTab === 'day-forecasts' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors">
+          Day Forecasts
+        </button>
+        <button 
+          (click)="setActiveTab('swing-forecasts')"
+          [class]="activeTab === 'swing-forecasts' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors">
+          Swing Forecasts
+        </button>
+        <button 
+          (click)="setActiveTab('comparison')"
+          [class]="activeTab === 'comparison' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors">
+          Comparison
+        </button>
+        <button 
+          (click)="setActiveTab('generate')"
+          [class]="activeTab === 'generate' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors">
+          Generate Forecasts
+        </button>
+        <button 
+          (click)="setActiveTab('advanced')"
+          [class]="activeTab === 'advanced' ? 'border-purple-500 text-purple-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors">
+          <span class="flex items-center space-x-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            <span>Advanced Forecasts</span>
+          </span>
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    
+
+    <!-- Day Forecasts Tab -->
+    <div *ngIf="activeTab === 'day-forecasts'" class="space-y-6">
+      <div *ngIf="!isLoadingDayForecasts; else dayForecastsLoading" class="bg-white rounded-lg shadow">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <div class="flex justify-between items-center">
+            <h3 class="text-lg font-medium text-gray-900">Day Trading Forecasts</h3>
+            <div class="flex items-center space-x-4">
+              <label for="dayFilter" class="text-sm font-medium text-gray-700">Filter by Signal:</label>
+              <select 
+                id="dayFilter"
+                [(ngModel)]="selectedDayFilter" 
+                name="dayFilter"
+                class="border border-gray-300 rounded-md px-3 py-1 text-sm focus:ring-blue-500 focus:border-blue-500">
+                <option *ngFor="let option of filterOptions" [value]="option.value">
+                  {{ option.label }}
+                  <span *ngIf="option.value !== 'all'">({{ getSignalCount(dayForecasts, option.value) }})</span>
+                </option>
+              </select>
+              <span class="text-sm text-gray-500">
+                {{ filteredDayForecasts.length }} of {{ dayForecasts.length }} forecasts
+              </span>
+            </div>
+          </div>
+          <div class="px-6 py-2 bg-gray-50 border-b border-gray-200">
+            <div class="flex items-center space-x-4 text-xs">
+              <span class="text-gray-600">Signal Distribution:</span>
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                BUY: {{ getSignalCount(dayForecasts, 'BUY') }}
+              </span>
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                HOLD: {{ getSignalCount(dayForecasts, 'HOLD') }}
+              </span>
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                SELL: {{ getSignalCount(dayForecasts, 'SELL') }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="p-6">
+          <div *ngIf="filteredDayForecasts.length > 0">
+            <!-- Compact Table Header -->
+            <div class="bg-gray-50 rounded-t-lg border border-b-0">
+              <div class="grid grid-cols-12 gap-4 px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <div class="col-span-2 cursor-pointer hover:text-blue-600 flex items-center justify-between" (click)="sortDayForecasts('symbol')">
+                  <span>Symbol</span>
+                  <span class="text-xs" *ngIf="daySortColumn === 'symbol'">{{ getSortIcon('symbol', daySortColumn, daySortDirection) }}</span>
+                </div>
+                <div class="col-span-1 cursor-pointer hover:text-blue-600 flex items-center justify-between" (click)="sortDayForecasts('signal')">
+                  <span>Signal</span>
+                  <span class="text-xs" *ngIf="daySortColumn === 'signal'">{{ getSortIcon('signal', daySortColumn, daySortDirection) }}</span>
+                </div>
+                <div class="col-span-1 cursor-pointer hover:text-blue-600 flex items-center justify-between" (click)="sortDayForecasts('confidence')">
+                  <span>Confidence</span>
+                  <span class="text-xs" *ngIf="daySortColumn === 'confidence'">{{ getSortIcon('confidence', daySortColumn, daySortDirection) }}</span>
+                </div>
+                <div class="col-span-2 cursor-pointer hover:text-blue-600 flex items-center justify-between" (click)="sortDayForecasts('predicted_price')">
+                  <span>Predicted Price</span>
+                  <span class="text-xs" *ngIf="daySortColumn === 'predicted_price'">{{ getSortIcon('predicted_price', daySortColumn, daySortDirection) }}</span>
+                </div>
+                <div class="col-span-1 cursor-pointer hover:text-blue-600 flex items-center justify-between" (click)="sortDayForecasts('risk')">
+                  <span>Risk</span>
+                  <span class="text-xs" *ngIf="daySortColumn === 'risk'">{{ getSortIcon('risk', daySortColumn, daySortDirection) }}</span>
+                </div>
+                <div class="col-span-1 cursor-pointer hover:text-blue-600 flex items-center justify-between" (click)="sortDayForecasts('valid_until')">
+                  <span>Valid Until</span>
+                  <span class="text-xs" *ngIf="daySortColumn === 'valid_until'">{{ getSortIcon('valid_until', daySortColumn, daySortDirection) }}</span>
+                </div>
+                <div class="col-span-2 cursor-pointer hover:text-blue-600 flex items-center justify-between" (click)="sortDayForecasts('market_regime')">
+                  <span>Market Regime</span>
+                  <span class="text-xs" *ngIf="daySortColumn === 'market_regime'">{{ getSortIcon('market_regime', daySortColumn, daySortDirection) }}</span>
+                </div>
+                <div class="col-span-2">Actions</div>
+              </div>
+            </div>
+            
+            <!-- Compact Table Rows -->
+            <div *ngFor="let forecast of filteredDayForecasts; trackBy: trackBySymbol" class="border-l border-r border-b border-gray-200 last:rounded-b-lg">
+              <!-- Main Row -->
+              <div class="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-gray-50 cursor-pointer" (click)="toggleDayForecastExpansion(forecast.symbol)">
+                <div class="col-span-2 flex items-center">
+                  <span class="font-semibold text-gray-900">{{ forecast.symbol }}</span>
+                  <svg class="w-4 h-4 ml-2 text-gray-400 transition-transform" [class.rotate-180]="isDayForecastExpanded(forecast.symbol)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
+                <div class="col-span-1 flex items-center">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium" [class]="getDirectionColor(forecast.direction)">
+                    {{ forecast.direction.toUpperCase() }}
+                  </span>
+                </div>
+                <div class="col-span-1 flex items-center">
+                  <span [class]="getConfidenceColor(forecast.confidence)" class="text-sm font-semibold">{{ formatPercent(forecast.confidence) }}</span>
+                </div>
+                <div class="col-span-2 flex items-center">
+                  <span class="font-semibold text-gray-900">{{ formatCurrency(forecast.predicted_price) }}</span>
+                </div>
+                <div class="col-span-1 flex items-center">
+                  <span [class]="getRiskColor(forecast.risk_score)" class="text-sm font-semibold">{{ formatPercent(forecast.risk_score) }}</span>
+                </div>
+                <div class="col-span-1 flex items-center">
+                  <span class="text-sm text-gray-600">{{ getTimeRemaining(forecast.valid_until) }}</span>
+                </div>
+                <div class="col-span-2 flex items-center">
+                  <span class="text-sm text-gray-600">{{ forecast.market_regime }}</span>
+                </div>
+                <div class="col-span-2 flex items-center">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium" [class]="getSignalStrengthColor(forecast.signal_strength)">
+                    {{ forecast.signal_strength.replace('_', ' ').toUpperCase() }}
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Expanded Details -->
+              <div *ngIf="isDayForecastExpanded(forecast.symbol)" class="bg-gray-50 border-t border-gray-200 px-4 py-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <!-- Price Details -->
+                  <div>
+                    <h6 class="font-medium text-gray-900 mb-3">Price Analysis</h6>
+                    <div class="space-y-2">
+                      <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Current Price:</span>
+                        <span class="text-sm font-medium">{{ formatCurrency(forecast.current_price || 0) }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Predicted Price:</span>
+                        <span class="text-sm font-semibold text-blue-600">{{ formatCurrency(forecast.predicted_price) }}</span>
+                      </div>
+                      <div *ngIf="forecast.current_price" class="flex justify-between">
+                        <span class="text-sm text-gray-600">Expected Change:</span>
+                        <span [class]="getPriceChange(forecast.current_price, forecast.predicted_price) >= 0 ? 'text-green-600' : 'text-red-600'" class="text-sm font-semibold">
+                          {{ getPriceChange(forecast.current_price, forecast.predicted_price) >= 0 ? '+' : '' }}{{ formatNumber(getPriceChange(forecast.current_price, forecast.predicted_price), 1) }}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Technical Indicators -->
+                  <div>
+                    <h6 class="font-medium text-gray-900 mb-3">Technical Indicators</h6>
+                    <div *ngIf="forecast.technical_indicators.length > 0" class="space-y-2">
+                      <div *ngFor="let indicator of forecast.technical_indicators" class="flex justify-between items-center">
+                        <span class="text-sm font-medium">{{ indicator.name }}</span>
+                        <div class="flex items-center space-x-2">
+                          <span [class]="indicator.signal === 'buy' ? 'text-green-600' : indicator.signal === 'sell' ? 'text-red-600' : 'text-gray-600'" class="text-xs font-medium">
+                            {{ indicator.signal.toUpperCase() }}
+                          </span>
+                          <span class="text-xs text-gray-500">({{ formatNumber(indicator.strength * 100, 0) }}%)</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div *ngIf="forecast.technical_indicators.length === 0" class="text-sm text-gray-500">
+                      No technical indicators available
+                    </div>
+                  </div>
+                  
+                  <!-- Market Conditions -->
+                  <div>
+                    <h6 class="font-medium text-gray-900 mb-3">Market Conditions</h6>
+                    <div class="space-y-2">
+                      <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Volatility Forecast:</span>
+                        <span class="text-sm font-medium">{{ formatPercent(forecast.volatility_forecast) }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Volume Forecast:</span>
+                        <span class="text-sm font-medium">{{ formatNumber(forecast.volume_forecast, 0) }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Valid Until:</span>
+                        <span class="text-sm font-medium text-blue-600">{{ formatDateTime(forecast.valid_until) }}</span>
+                      </div>
+                    </div>
+                    
+                    <!-- Timing Information -->
+                    <div class="mt-4 bg-blue-50 rounded-lg p-3 border border-blue-200">
+                      <h6 class="font-medium text-blue-900 mb-2">Signal Timing</h6>
+                      <p class="text-sm text-blue-800" *ngIf="forecast.direction === 'buy'">
+                        Buy before target price {{ formatCurrency(forecast.predicted_price) }} is reached
+                      </p>
+                      <p class="text-sm text-blue-800" *ngIf="forecast.direction === 'hold'">
+                        Hold until market conditions change
+                      </p>
+                      <p class="text-sm text-blue-800" *ngIf="forecast.direction === 'sell'">
+                        Sell before target price {{ formatCurrency(forecast.predicted_price) }} is reached
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="dayForecasts.length === 0" class="text-center py-8">
+            <p class="text-gray-500">No day forecasts available</p>
+            <p class="text-sm text-gray-400 mt-2">Generate forecasts using the "Generate Forecasts" tab</p>
+          </div>
+          <div *ngIf="dayForecasts.length > 0 && filteredDayForecasts.length === 0" class="text-center py-8">
+            <p class="text-gray-500">No {{ selectedDayFilter.toLowerCase() }} signals found</p>
+            <p class="text-sm text-gray-400 mt-2">Try changing the filter to see other signals</p>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #dayForecastsLoading>
+        <app-skeleton type="card"></app-skeleton>
+      </ng-template>
+    </div>
+
+    <!-- Swing Forecasts Tab -->
+    <div *ngIf="activeTab === 'swing-forecasts'" class="space-y-6">
+      <div *ngIf="!isLoadingSwingForecasts; else swingForecastsLoading" class="bg-white rounded-lg shadow">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <div class="flex justify-between items-center">
+            <h3 class="text-lg font-medium text-gray-900">Swing Trading Forecasts</h3>
+            <div class="flex items-center space-x-4">
+              <label for="swingFilter" class="text-sm font-medium text-gray-700">Filter by Signal:</label>
+              <select 
+                id="swingFilter"
+                [(ngModel)]="selectedSwingFilter" 
+                name="swingFilter"
+                class="border border-gray-300 rounded-md px-3 py-1 text-sm focus:ring-green-500 focus:border-green-500">
+                <option *ngFor="let option of filterOptions" [value]="option.value">
+                  {{ option.label }}
+                  <span *ngIf="option.value !== 'all'">({{ getSignalCount(swingForecasts, option.value) }})</span>
+                </option>
+              </select>
+              <span class="text-sm text-gray-500">
+                {{ filteredSwingForecasts.length }} of {{ swingForecasts.length }} forecasts
+              </span>
+            </div>
+          </div>
+          <div class="px-6 py-2 bg-gray-50 border-b border-gray-200">
+            <div class="flex items-center space-x-4 text-xs">
+              <span class="text-gray-600">Signal Distribution:</span>
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                BUY: {{ getSignalCount(swingForecasts, 'BUY') }}
+              </span>
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                HOLD: {{ getSignalCount(swingForecasts, 'HOLD') }}
+              </span>
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                SELL: {{ getSignalCount(swingForecasts, 'SELL') }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="p-6">
+          <div *ngIf="filteredSwingForecasts.length > 0">
+            <!-- Compact Table Header -->
+            <div class="bg-gray-50 rounded-t-lg border border-b-0">
+              <div class="grid grid-cols-12 gap-4 px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <div class="col-span-2 cursor-pointer hover:text-green-600 flex items-center justify-between" (click)="sortSwingForecasts('symbol')">
+                  <span>Symbol</span>
+                  <span class="text-xs" *ngIf="swingSortColumn === 'symbol'">{{ getSortIcon('symbol', swingSortColumn, swingSortDirection) }}</span>
+                </div>
+                <div class="col-span-1 cursor-pointer hover:text-green-600 flex items-center justify-between" (click)="sortSwingForecasts('signal')">
+                  <span>Signal</span>
+                  <span class="text-xs" *ngIf="swingSortColumn === 'signal'">{{ getSortIcon('signal', swingSortColumn, swingSortDirection) }}</span>
+                </div>
+                <div class="col-span-1 cursor-pointer hover:text-green-600 flex items-center justify-between" (click)="sortSwingForecasts('confidence')">
+                  <span>Confidence</span>
+                  <span class="text-xs" *ngIf="swingSortColumn === 'confidence'">{{ getSortIcon('confidence', swingSortColumn, swingSortDirection) }}</span>
+                </div>
+                <div class="col-span-2 cursor-pointer hover:text-green-600 flex items-center justify-between" (click)="sortSwingForecasts('predicted_price')">
+                  <span>Predicted Price</span>
+                  <span class="text-xs" *ngIf="swingSortColumn === 'predicted_price'">{{ getSortIcon('predicted_price', swingSortColumn, swingSortDirection) }}</span>
+                </div>
+                <div class="col-span-1 cursor-pointer hover:text-green-600 flex items-center justify-between" (click)="sortSwingForecasts('risk')">
+                  <span>Risk</span>
+                  <span class="text-xs" *ngIf="swingSortColumn === 'risk'">{{ getSortIcon('risk', swingSortColumn, swingSortDirection) }}</span>
+                </div>
+                <div class="col-span-1 cursor-pointer hover:text-green-600 flex items-center justify-between" (click)="sortSwingForecasts('valid_until')">
+                  <span>Valid Until</span>
+                  <span class="text-xs" *ngIf="swingSortColumn === 'valid_until'">{{ getSortIcon('valid_until', swingSortColumn, swingSortDirection) }}</span>
+                </div>
+                <div class="col-span-2 cursor-pointer hover:text-green-600 flex items-center justify-between" (click)="sortSwingForecasts('market_regime')">
+                  <span>Market Regime</span>
+                  <span class="text-xs" *ngIf="swingSortColumn === 'market_regime'">{{ getSortIcon('market_regime', swingSortColumn, swingSortDirection) }}</span>
+                </div>
+                <div class="col-span-2">Actions</div>
+              </div>
+            </div>
+            
+            <!-- Compact Table Rows -->
+            <div *ngFor="let forecast of filteredSwingForecasts; trackBy: trackBySymbol" class="border-l border-r border-b border-gray-200 last:rounded-b-lg">
+              <!-- Main Row -->
+              <div class="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-gray-50 cursor-pointer" (click)="toggleSwingForecastExpansion(forecast.symbol)">
+                <div class="col-span-2 flex items-center">
+                  <span class="font-semibold text-gray-900">{{ forecast.symbol }}</span>
+                  <svg class="w-4 h-4 ml-2 text-gray-400 transition-transform" [class.rotate-180]="isSwingForecastExpanded(forecast.symbol)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
+                <div class="col-span-1 flex items-center">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium" [class]="getDirectionColor(forecast.direction)">
+                    {{ forecast.direction.toUpperCase() }}
+                  </span>
+                </div>
+                <div class="col-span-1 flex items-center">
+                  <span [class]="getConfidenceColor(forecast.confidence)" class="text-sm font-semibold">{{ formatPercent(forecast.confidence) }}</span>
+                </div>
+                <div class="col-span-2 flex items-center">
+                  <span class="font-semibold text-gray-900">{{ formatCurrency(forecast.predicted_price) }}</span>
+                </div>
+                <div class="col-span-1 flex items-center">
+                  <span [class]="getRiskColor(forecast.risk_score)" class="text-sm font-semibold">{{ formatPercent(forecast.risk_score) }}</span>
+                </div>
+                <div class="col-span-1 flex items-center">
+                  <span class="text-sm text-gray-600">{{ getTimeRemaining(forecast.valid_until) }}</span>
+                </div>
+                <div class="col-span-2 flex items-center">
+                  <span class="text-sm text-gray-600">{{ forecast.market_regime }}</span>
+                </div>
+                <div class="col-span-2 flex items-center">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium" [class]="getSignalStrengthColor(forecast.signal_strength)">
+                    {{ forecast.signal_strength.replace('_', ' ').toUpperCase() }}
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Expanded Details -->
+              <div *ngIf="isSwingForecastExpanded(forecast.symbol)" class="bg-gray-50 border-t border-gray-200 px-4 py-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <!-- Price Details -->
+                  <div>
+                    <h6 class="font-medium text-gray-900 mb-3">Price Analysis</h6>
+                    <div class="space-y-2">
+                      <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Current Price:</span>
+                        <span class="text-sm font-medium">{{ formatCurrency(forecast.current_price || 0) }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Predicted Price:</span>
+                        <span class="text-sm font-semibold text-green-600">{{ formatCurrency(forecast.predicted_price) }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Target Price:</span>
+                        <span class="text-sm font-semibold text-green-600">{{ formatCurrency(forecast.target_price) }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Stop Loss:</span>
+                        <span class="text-sm font-semibold text-red-600">{{ formatCurrency(forecast.stop_loss) }}</span>
+                      </div>
+                      <div *ngIf="forecast.current_price" class="flex justify-between">
+                        <span class="text-sm text-gray-600">Expected Change:</span>
+                        <span [class]="getPriceChange(forecast.current_price, forecast.predicted_price) >= 0 ? 'text-green-600' : 'text-red-600'" class="text-sm font-semibold">
+                          {{ getPriceChange(forecast.current_price, forecast.predicted_price) >= 0 ? '+' : '' }}{{ formatNumber(getPriceChange(forecast.current_price, forecast.predicted_price), 1) }}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Trading Levels -->
+                  <div>
+                    <h6 class="font-medium text-gray-900 mb-3">Trading Levels</h6>
+                    <div class="space-y-3">
+                      <div class="bg-green-50 rounded-lg p-3 border border-green-200">
+                        <div class="flex justify-between items-center">
+                          <span class="text-sm font-medium text-green-700">Target Price:</span>
+                          <span class="text-sm font-semibold text-green-800">{{ formatCurrency(forecast.target_price) }}</span>
+                        </div>
+                      </div>
+                      <div class="bg-red-50 rounded-lg p-3 border border-red-200">
+                        <div class="flex justify-between items-center">
+                          <span class="text-sm font-medium text-red-700">Stop Loss:</span>
+                          <span class="text-sm font-semibold text-red-800">{{ formatCurrency(forecast.stop_loss) }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Market Conditions -->
+                  <div>
+                    <h6 class="font-medium text-gray-900 mb-3">Market Conditions</h6>
+                    <div class="space-y-2">
+                      <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Technical Score:</span>
+                        <span class="text-sm font-medium">{{ formatPercent(forecast.technical_score) }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Fundamental Score:</span>
+                        <span class="text-sm font-medium">{{ formatPercent(forecast.fundamental_score) }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Sentiment Score:</span>
+                        <span class="text-sm font-medium">{{ formatPercent(forecast.sentiment_score) }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Valid Until:</span>
+                        <span class="text-sm font-medium text-green-600">{{ formatDateTime(forecast.valid_until) }}</span>
+                      </div>
+                    </div>
+                    
+                    <!-- Timing Information -->
+                    <div class="mt-4 bg-green-50 rounded-lg p-3 border border-green-200">
+                      <h6 class="font-medium text-green-900 mb-2">Signal Timing</h6>
+                      <p class="text-sm text-green-800" *ngIf="forecast.direction === 'buy'">
+                        Buy before target price {{ formatCurrency(forecast.predicted_price) }} is reached
+                      </p>
+                      <p class="text-sm text-green-800" *ngIf="forecast.direction === 'hold'">
+                        Hold until market conditions change
+                      </p>
+                      <p class="text-sm text-green-800" *ngIf="forecast.direction === 'sell'">
+                        Sell before target price {{ formatCurrency(forecast.predicted_price) }} is reached
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="swingForecasts.length === 0" class="text-center py-8">
+            <p class="text-gray-500">No swing forecasts available</p>
+            <p class="text-sm text-gray-400 mt-2">Generate forecasts using the "Generate Forecasts" tab</p>
+          </div>
+          <div *ngIf="swingForecasts.length > 0 && filteredSwingForecasts.length === 0" class="text-center py-8">
+            <p class="text-gray-500">No {{ selectedSwingFilter.toLowerCase() }} signals found</p>
+            <p class="text-sm text-gray-400 mt-2">Try changing the filter to see other signals</p>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #swingForecastsLoading>
+        <app-skeleton type="card"></app-skeleton>
+      </ng-template>
+    </div>
+
+    <!-- Comparison Tab -->
+    <div *ngIf="activeTab === 'comparison'" class="space-y-6">
+      <div *ngIf="!isLoadingComparison; else comparisonLoading" class="bg-white rounded-lg shadow">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">Day vs Swing Forecast Comparison</h3>
+        </div>
+        <div class="p-6">
+          <div *ngIf="forecastComparison" class="space-y-6">
+            <!-- Comparison Summary -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Day Forecast -->
+              <div *ngIf="forecastComparison.day_forecast" class="border rounded-lg p-4">
+                <h4 class="font-semibold text-gray-900 mb-3">Day Forecast</h4>
+                <div class="space-y-2">
+                  <p class="text-sm">
+                    <span class="font-medium">Horizon:</span> {{ forecastComparison.day_forecast.horizon }}
+                  </p>
+                  <p class="text-sm">
+                    <span class="font-medium">Price:</span> {{ formatCurrency(forecastComparison.day_forecast.predicted_price) }}
+                  </p>
+                  <p class="text-sm">
+                    <span class="font-medium">Direction:</span> 
+                    <span [class]="getDirectionColor(forecastComparison.day_forecast.direction).split(' ')[0]">
+                      {{ forecastComparison.day_forecast.direction.toUpperCase() }}
+                    </span>
+                  </p>
+                  <p class="text-sm">
+                    <span class="font-medium">Confidence:</span> 
+                    <span [class]="getConfidenceColor(forecastComparison.day_forecast.confidence)">
+                      {{ formatPercent(forecastComparison.day_forecast.confidence) }}
+                    </span>
+                  </p>
+                  <p class="text-sm">
+                    <span class="font-medium">Risk:</span> 
+                    <span [class]="getRiskColor(forecastComparison.day_forecast.risk_score)">
+                      {{ formatPercent(forecastComparison.day_forecast.risk_score) }}
+                    </span>
+                  </p>
+                </div>
+              </div>
+
+              <!-- Swing Forecast -->
+              <div *ngIf="forecastComparison.swing_forecast" class="border rounded-lg p-4">
+                <h4 class="font-semibold text-gray-900 mb-3">Swing Forecast</h4>
+                <div class="space-y-2">
+                  <p class="text-sm">
+                    <span class="font-medium">Horizon:</span> {{ forecastComparison.swing_forecast.horizon }}
+                  </p>
+                  <p class="text-sm">
+                    <span class="font-medium">Price:</span> {{ formatCurrency(forecastComparison.swing_forecast.predicted_price) }}
+                  </p>
+                  <p class="text-sm">
+                    <span class="font-medium">Direction:</span> 
+                    <span [class]="getDirectionColor(forecastComparison.swing_forecast.direction).split(' ')[0]">
+                      {{ forecastComparison.swing_forecast.direction.toUpperCase() }}
+                    </span>
+                  </p>
+                  <p class="text-sm">
+                    <span class="font-medium">Confidence:</span> 
+                    <span [class]="getConfidenceColor(forecastComparison.swing_forecast.confidence)">
+                      {{ formatPercent(forecastComparison.swing_forecast.confidence) }}
+                    </span>
+                  </p>
+                  <p class="text-sm">
+                    <span class="font-medium">Risk:</span> 
+                    <span [class]="getRiskColor(forecastComparison.swing_forecast.risk_score)">
+                      {{ formatPercent(forecastComparison.swing_forecast.risk_score) }}
+                    </span>
+                  </p>
+                  <p class="text-sm">
+                    <span class="font-medium">Target:</span> {{ formatCurrency(forecastComparison.swing_forecast.target_price) }}
+                  </p>
+                  <p class="text-sm">
+                    <span class="font-medium">Stop Loss:</span> {{ formatCurrency(forecastComparison.swing_forecast.stop_loss) }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comparison Analysis -->
+            <div *ngIf="forecastComparison.comparison" class="border rounded-lg p-4">
+              <h4 class="font-semibold text-gray-900 mb-3">Comparison Analysis</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p class="text-sm">
+                    <span class="font-medium">Direction Agreement:</span> 
+                    <span [class]="forecastComparison.comparison.direction_agreement ? 'text-green-600' : 'text-red-600'">
+                      {{ forecastComparison.comparison.direction_agreement ? 'YES' : 'NO' }}
+                    </span>
+                  </p>
+                  <p class="text-sm">
+                    <span class="font-medium">Confidence Difference:</span> 
+                    {{ formatPercent(forecastComparison.comparison.confidence_difference) }}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-sm">
+                    <span class="font-medium">Price Difference:</span> 
+                    {{ formatCurrency(forecastComparison.comparison.price_difference) }}
+                  </p>
+                  <p class="text-sm">
+                    <span class="font-medium">Risk Difference:</span> 
+                    {{ formatPercent(forecastComparison.comparison.risk_difference) }}
+                  </p>
+                </div>
+              </div>
+              <div class="mt-4 p-3 bg-blue-50 rounded">
+                <p class="text-sm font-medium text-blue-900">
+                  Recommended Strategy: 
+                  <span class="uppercase">{{ forecastComparison.comparison.recommended_strategy.replace('_', ' ') }}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!forecastComparison" class="text-center py-8">
+            <p class="text-gray-500">No comparison data available</p>
+            <p class="text-sm text-gray-400 mt-2">Generate forecasts to see comparison</p>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #comparisonLoading>
+        <app-skeleton type="card"></app-skeleton>
+      </ng-template>
+    </div>
+
+    <!-- Generate Forecasts Tab -->
+    <div *ngIf="activeTab === 'generate'" class="space-y-6">
+      <div class="bg-white rounded-lg shadow">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">Generate Forecasts</h3>
+        </div>
+        <div class="p-6">
+          <form (ngSubmit)="generateForecasts()" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <!-- Symbol Selection -->
+              <div>
+                <label for="symbol" class="block text-sm font-medium text-gray-700">Symbol</label>
+                <select 
+                  id="symbol"
+                  [(ngModel)]="selectedSymbol" 
+                  name="symbol"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                  <option *ngFor="let symbol of symbols" [value]="symbol">{{ symbol }}</option>
+                </select>
+              </div>
+
+              <!-- Day Horizon -->
+              <div>
+                <label for="dayHorizon" class="block text-sm font-medium text-gray-700">Day Horizon</label>
+                <select 
+                  id="dayHorizon"
+                  [(ngModel)]="selectedDayHorizon" 
+                  name="dayHorizon"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                  <option *ngFor="let horizon of dayHorizons" [value]="horizon.value">{{ horizon.label }}</option>
+                </select>
+              </div>
+
+              <!-- Swing Horizon -->
+              <div>
+                <label for="swingHorizon" class="block text-sm font-medium text-gray-700">Swing Horizon</label>
+                <select 
+                  id="swingHorizon"
+                  [(ngModel)]="selectedSwingHorizon" 
+                  name="swingHorizon"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                  <option *ngFor="let horizon of swingHorizons" [value]="horizon.value">{{ horizon.label }}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <div class="text-sm text-gray-600">
+                <span *ngIf="symbols.length > 0">{{ symbols.length }} managed symbols available</span>
+                <span *ngIf="symbols.length === 0">Loading managed symbols...</span>
+              </div>
+              <div class="flex space-x-4">
+                <button 
+                  type="button"
+                  (click)="generateForecastsForAllSymbols()"
+                  [disabled]="isLoading || symbols.length === 0"
+                  class="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 disabled:opacity-50 transition-colors">
+                  <span *ngIf="isLoading">Generating...</span>
+                  <span *ngIf="!isLoading">Generate All Managed Symbols</span>
+                </button>
+                <button 
+                  type="button"
+                  (click)="getDayForecast(selectedSymbol, selectedDayHorizon)"
+                  [disabled]="isLoading"
+                  class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors">
+                  Get Day Forecast
+                </button>
+                <button 
+                  type="button"
+                  (click)="getSwingForecast(selectedSymbol, selectedSwingHorizon)"
+                  [disabled]="isLoading"
+                  class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:opacity-50 transition-colors">
+                  Get Swing Forecast
+                </button>
+                <button 
+                  type="submit"
+                  [disabled]="isLoading"
+                  class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 disabled:opacity-50 transition-colors">
+                  <span *ngIf="isLoading">Generating...</span>
+                  <span *ngIf="!isLoading">Generate Both</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Advanced Forecasting Tab -->
+    <div *ngIf="activeTab === 'advanced'" class="space-y-6">
+      <!-- Header Section -->
+      <div class="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg shadow-lg p-6 text-white">
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-bold">🚀 Advanced Multi-Agent Forecasting</h2>
+            <p class="mt-2 text-purple-100">Powered by 15 specialized AI agents including RAG, RL, Meta-Evaluation, Latent Patterns & Ensemble Blending</p>
+          </div>
+          <button 
+            (click)="loadAdvancedForecasts()"
+            [disabled]="isLoadingAdvanced"
+            class="bg-white text-purple-600 px-6 py-3 rounded-lg hover:bg-purple-50 disabled:opacity-50 transition-all transform hover:scale-105 font-semibold shadow-lg">
+            <span *ngIf="!isLoadingAdvanced">Generate Advanced Forecasts</span>
+            <span *ngIf="isLoadingAdvanced" class="flex items-center space-x-2">
+              <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>Processing...</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoadingAdvanced" class="flex justify-center items-center py-12">
+        <div class="text-center">
+          <svg class="animate-spin h-12 w-12 text-purple-600 mx-auto" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <p class="mt-4 text-gray-600">Consulting 15 AI agents for comprehensive analysis...</p>
+        </div>
+      </div>
+
+      <!-- Filter and Signal Distribution -->
+      <div *ngIf="!isLoadingAdvanced && advancedForecasts.length > 0" class="bg-white rounded-lg shadow-md p-4 mb-6">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center space-x-4">
+            <label class="text-sm font-semibold text-gray-700">Filter by Signal:</label>
+            <select [(ngModel)]="selectedAdvancedFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+              <option value="all">All Signals ({{ advancedForecasts.length }})</option>
+              <option value="BUY">Buy Signals ({{ getSignalCount(advancedForecasts, 'BUY') }})</option>
+              <option value="HOLD">Hold Signals ({{ getSignalCount(advancedForecasts, 'HOLD') }})</option>
+              <option value="SELL">Sell Signals ({{ getSignalCount(advancedForecasts, 'SELL') }})</option>
+            </select>
+          </div>
+          
+          <!-- Signal Distribution Badges -->
+          <div class="flex space-x-3">
+            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
+              🟢 {{ getSignalCount(advancedForecasts, 'BUY') }} Buy
+            </span>
+            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold">
+              🟡 {{ getSignalCount(advancedForecasts, 'HOLD') }} Hold
+            </span>
+            <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-semibold">
+              🔴 {{ getSignalCount(advancedForecasts, 'SELL') }} Sell
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advanced Forecasts Display -->
+      <div *ngIf="!isLoadingAdvanced && filteredAdvancedForecasts.length > 0">
+        <!-- Compact Table Header -->
+        <div class="bg-gray-50 rounded-t-lg border border-b-0">
+          <div class="grid grid-cols-12 gap-4 px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <div class="col-span-2 cursor-pointer hover:text-purple-600 flex items-center justify-between" (click)="sortAdvancedForecasts('symbol')">
+              <span>Symbol</span>
+              <span class="text-xs" *ngIf="advancedSortColumn === 'symbol'">{{ getSortIcon('symbol', advancedSortColumn, advancedSortDirection) }}</span>
+            </div>
+            <div class="col-span-1 cursor-pointer hover:text-purple-600 flex items-center justify-between" (click)="sortAdvancedForecasts('signal')">
+              <span>Signal</span>
+              <span class="text-xs" *ngIf="advancedSortColumn === 'signal'">{{ getSortIcon('signal', advancedSortColumn, advancedSortDirection) }}</span>
+            </div>
+            <div class="col-span-1 cursor-pointer hover:text-purple-600 flex items-center justify-between" (click)="sortAdvancedForecasts('confidence')">
+              <span>Confidence</span>
+              <span class="text-xs" *ngIf="advancedSortColumn === 'confidence'">{{ getSortIcon('confidence', advancedSortColumn, advancedSortDirection) }}</span>
+            </div>
+            <div class="col-span-2 cursor-pointer hover:text-purple-600 flex items-center justify-between" (click)="sortAdvancedForecasts('target_price')">
+              <span>Target Price</span>
+              <span class="text-xs" *ngIf="advancedSortColumn === 'target_price'">{{ getSortIcon('target_price', advancedSortColumn, advancedSortDirection) }}</span>
+            </div>
+            <div class="col-span-1 cursor-pointer hover:text-purple-600 flex items-center justify-between" (click)="sortAdvancedForecasts('risk')">
+              <span>Risk</span>
+              <span class="text-xs" *ngIf="advancedSortColumn === 'risk'">{{ getSortIcon('risk', advancedSortColumn, advancedSortDirection) }}</span>
+            </div>
+            <div class="col-span-1 cursor-pointer hover:text-purple-600 flex items-center justify-between" (click)="sortAdvancedForecasts('valid_until')">
+              <span>Valid Until</span>
+              <span class="text-xs" *ngIf="advancedSortColumn === 'valid_until'">{{ getSortIcon('valid_until', advancedSortColumn, advancedSortDirection) }}</span>
+            </div>
+            <div class="col-span-2 cursor-pointer hover:text-purple-600 flex items-center justify-between" (click)="sortAdvancedForecasts('agents')">
+              <span>Agents</span>
+              <span class="text-xs" *ngIf="advancedSortColumn === 'agents'">{{ getSortIcon('agents', advancedSortColumn, advancedSortDirection) }}</span>
+            </div>
+            <div class="col-span-2">Actions</div>
+          </div>
+        </div>
+        
+        <!-- Compact Table Rows -->
+        <div *ngFor="let forecast of filteredAdvancedForecasts; trackBy: trackBySymbol" class="border-l border-r border-b border-gray-200 last:rounded-b-lg">
+          <!-- Main Row -->
+          <div class="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-gray-50 cursor-pointer" (click)="toggleAdvancedForecastExpansion(forecast.symbol)">
+            <div class="col-span-2 flex items-center">
+              <span class="font-semibold text-gray-900">{{ forecast.symbol }}</span>
+              <svg class="w-4 h-4 ml-2 text-gray-400 transition-transform" [class.rotate-180]="isAdvancedForecastExpanded(forecast.symbol)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+            <div class="col-span-1 flex items-center">
+              <span class="px-2 py-1 rounded-full text-xs font-medium"
+                    [class.bg-green-600]="forecast.final_signal === 'BUY'"
+                    [class.text-white]="forecast.final_signal === 'BUY'"
+                    [class.bg-red-600]="forecast.final_signal === 'SELL'"
+                    [class.text-white]="forecast.final_signal === 'SELL'"
+                    [class.bg-yellow-600]="forecast.final_signal === 'HOLD'"
+                    [class.text-white]="forecast.final_signal === 'HOLD'">
+                {{ forecast.final_signal }}
+              </span>
+            </div>
+            <div class="col-span-1 flex items-center">
+              <span class="text-sm font-semibold"
+                    [class.text-green-600]="forecast.final_confidence >= 0.8"
+                    [class.text-yellow-600]="forecast.final_confidence >= 0.6 && forecast.final_confidence < 0.8"
+                    [class.text-red-600]="forecast.final_confidence < 0.6">
+                {{ formatPercent(forecast.final_confidence) }}
+              </span>
+            </div>
+            <div class="col-span-2 flex items-center">
+              <span class="font-semibold text-gray-900">{{ formatCurrency(forecast.target_price) }}</span>
+            </div>
+            <div class="col-span-1 flex items-center">
+              <span [class]="getRiskColor(forecast.risk_score)" class="text-sm font-semibold">{{ formatPercent(forecast.risk_score) }}</span>
+            </div>
+            <div class="col-span-1 flex items-center">
+              <span class="text-sm text-gray-600">{{ getTimeRemaining(forecast.valid_until) }}</span>
+            </div>
+            <div class="col-span-2 flex items-center">
+              <span class="text-sm text-gray-600">{{ forecast.total_agents_contributing }} agents</span>
+            </div>
+            <div class="col-span-2 flex items-center">
+              <span class="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                {{ forecast.signal_strength }} Signal
+              </span>
+            </div>
+          </div>
+          
+          <!-- Expanded Details -->
+          <div *ngIf="isAdvancedForecastExpanded(forecast.symbol)" class="bg-gray-50 border-t border-gray-200 px-4 py-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <!-- Price Analysis -->
+              <div>
+                <h6 class="font-medium text-gray-900 mb-3">Price Analysis</h6>
+                <div class="space-y-2">
+                  <div class="flex justify-between">
+                    <span class="text-sm text-gray-600">Current Price:</span>
+                    <span class="text-sm font-medium">{{ formatCurrency(forecast.current_price) }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-gray-600">Target Price:</span>
+                    <span class="text-sm font-semibold text-blue-600">{{ formatCurrency(forecast.target_price) }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-gray-600">Stop Loss:</span>
+                    <span class="text-sm font-semibold text-red-600">{{ formatCurrency(forecast.stop_loss) }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-gray-600">Expected Change:</span>
+                    <span [class]="forecast.price_change_pct > 0 ? 'text-green-600' : 'text-red-600'" class="text-sm font-semibold">
+                      {{ forecast.price_change_pct > 0 ? '+' : '' }}{{ formatNumber(forecast.price_change_pct, 2) }}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Agent Contributions -->
+              <div>
+                <h6 class="font-medium text-gray-900 mb-3">Agent Contributions</h6>
+                <div *ngIf="forecast.agent_contributions && forecast.agent_contributions.length > 0" class="space-y-2">
+                  <div *ngFor="let agent of forecast.agent_contributions.slice(0, 4)" class="flex justify-between items-center p-2 bg-white rounded border">
+                    <div class="flex flex-col">
+                      <span class="text-xs font-medium text-gray-900">{{ agent.agent_name }}</span>
+                      <span class="text-xs text-gray-500">{{ formatPercent(agent.confidence) }}</span>
+                    </div>
+                    <span class="px-2 py-1 rounded text-xs font-bold"
+                          [class.bg-green-100]="agent.signal === 'BUY'"
+                          [class.text-green-800]="agent.signal === 'BUY'"
+                          [class.bg-red-100]="agent.signal === 'SELL'"
+                          [class.text-red-800]="agent.signal === 'SELL'"
+                          [class.bg-yellow-100]="agent.signal === 'HOLD'"
+                          [class.text-yellow-800]="agent.signal === 'HOLD'">
+                      {{ agent.signal }}
+                    </span>
+                  </div>
+                </div>
+                <div *ngIf="!forecast.agent_contributions || forecast.agent_contributions.length === 0" class="text-sm text-gray-500">
+                  No agent contributions available
+                </div>
+              </div>
+              
+              <!-- Signal Analysis -->
+              <div>
+                <h6 class="font-medium text-gray-900 mb-3">Signal Analysis</h6>
+                <div class="space-y-2">
+                  <div class="flex justify-between">
+                    <span class="text-sm text-gray-600">Final Signal:</span>
+                    <span class="text-sm font-semibold">{{ forecast.final_signal }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-gray-600">Final Confidence:</span>
+                    <span class="text-sm font-semibold">{{ formatPercent(forecast.final_confidence) }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-gray-600">Signal Strength:</span>
+                    <span class="text-sm font-semibold">{{ forecast.signal_strength }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm text-gray-600">Valid Until:</span>
+                    <span class="text-sm font-medium text-purple-600">{{ formatDateTime(forecast.valid_until) }}</span>
+                  </div>
+                </div>
+                
+                <!-- Timing Information -->
+                <div class="mt-4 bg-amber-50 rounded-lg p-3 border border-amber-200">
+                  <h6 class="font-medium text-amber-900 mb-2">Signal Timing</h6>
+                  <p class="text-sm text-amber-800" *ngIf="forecast.final_signal === 'BUY'">
+                    Buy before target price {{ formatCurrency(forecast.target_price) }} is reached
+                  </p>
+                  <p class="text-sm text-amber-800" *ngIf="forecast.final_signal === 'HOLD'">
+                    Hold until market conditions change
+                  </p>
+                  <p class="text-sm text-amber-800" *ngIf="forecast.final_signal === 'SELL'">
+                    Sell before target price {{ formatCurrency(forecast.target_price) }} is reached
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty Filter Results -->
+      <div *ngIf="!isLoadingAdvanced && advancedForecasts.length > 0 && filteredAdvancedForecasts.length === 0" class="text-center py-12 bg-white rounded-lg shadow-md">
+        <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+        </svg>
+        <h3 class="mt-4 text-lg font-medium text-gray-900">No {{ selectedAdvancedFilter }} Signals Found</h3>
+        <p class="mt-2 text-gray-500">Try selecting a different filter option</p>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!isLoadingAdvanced && advancedForecasts.length === 0" class="text-center py-12">
+        <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        <h3 class="mt-4 text-lg font-medium text-gray-900">No Advanced Forecasts Generated</h3>
+        <p class="mt-2 text-gray-500">Click "Generate Advanced Forecasts" to get comprehensive AI-powered predictions</p>
+      </div>
+    </div>
+
+  </div>
+</div>

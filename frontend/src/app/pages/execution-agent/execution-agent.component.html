@@ -1,0 +1,103 @@
+<div class="space-y-6 max-w-7xl mx-auto">
+  <div>
+    <h1 class="text-3xl font-bold text-gray-900">Execution Agent</h1>
+    <p class="text-gray-600">Order management, position sizing, and execution strategies</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" *ngIf="executionAgentSummary$ | async as summary">
+    <div class="metric-card-enhanced">
+      <div class="p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Total Orders</p>
+            <p class="text-2xl font-bold text-gray-900">{{ summary.total_orders | number }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-card-enhanced">
+      <div class="p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Success Rate</p>
+            <p class="text-2xl font-bold text-gray-900">{{ (summary.execution_success_rate * 100) | number:'1.1-1' }}%</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-card-enhanced">
+      <div class="p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Total Volume</p>
+            <p class="text-2xl font-bold text-gray-900">${{ summary.total_volume | number:'1.0-0' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-card-enhanced">
+      <div class="p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-12 h-12 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Avg Execution</p>
+            <p class="text-2xl font-bold text-gray-900">{{ summary.avg_execution_time | number:'1.1-1' }}s</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="metric-card-enhanced">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">Execution Agent Status</h3>
+      <p class="text-sm text-gray-600">Real-time execution metrics and performance</p>
+    </div>
+    <div class="p-6" *ngIf="executionAgentSummary$ | async as summary">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="text-center">
+          <div class="text-2xl font-bold text-blue-600">{{ summary.active_orders }}</div>
+          <div class="text-sm text-gray-600">Active Orders</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-green-600">{{ summary.filled_orders | number }}</div>
+          <div class="text-sm text-gray-600">Filled Orders</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-purple-600">{{ summary.active_strategies }}</div>
+          <div class="text-sm text-gray-600">Active Strategies</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

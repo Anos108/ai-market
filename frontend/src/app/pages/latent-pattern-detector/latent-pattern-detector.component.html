@@ -1,0 +1,218 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">🧬 Latent Pattern Detector</h1>
+      <p class="mt-2 text-gray-600">Advanced dimensionality reduction and pattern discovery in market data</p>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" *ngIf="latentPatternSummary$ | async as summary">
+      <!-- Total Patterns -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+          <div class="p-2 bg-blue-100 rounded-lg">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Total Patterns</p>
+            <p class="text-2xl font-bold text-gray-900">{{ summary.total_patterns }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pattern Types -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+          <div class="p-2 bg-green-100 rounded-lg">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Pattern Types</p>
+            <p class="text-2xl font-bold text-gray-900">{{ Object.keys(summary.pattern_counts).length }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compression Methods -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+          <div class="p-2 bg-purple-100 rounded-lg">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Compression Methods</p>
+            <p class="text-2xl font-bold text-gray-900">{{ summary.compression_metrics.length }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Insights -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+          <div class="p-2 bg-yellow-100 rounded-lg">
+            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Recent Insights</p>
+            <p class="text-2xl font-bold text-gray-900">{{ summary.recent_insights.length }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pattern Counts by Type -->
+    <div class="mb-8" *ngIf="latentPatternSummary$ | async as summary">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Pattern Distribution by Type</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4" *ngIf="Object.keys(summary.pattern_counts).length > 0; else noPatterns">
+          <div *ngFor="let patternType of Object.keys(summary.pattern_counts)" class="text-center p-4 bg-gray-50 rounded-lg">
+            <div class="text-2xl font-bold text-gray-900">{{ summary.pattern_counts[patternType] }}</div>
+            <div class="text-sm text-gray-600 capitalize">{{ patternType }}</div>
+          </div>
+        </div>
+        <ng-template #noPatterns>
+          <div class="text-center py-8">
+            <div class="text-gray-500">No patterns detected yet. Data collection in progress...</div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Recent Patterns -->
+      <div class="bg-white rounded-lg shadow">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-semibold text-gray-900">Recent Latent Patterns</h2>
+        </div>
+        <div class="p-6">
+          <div class="space-y-4" *ngIf="latentPatterns$ | async as patterns; else noPatternData">
+            <div *ngFor="let pattern of patterns.slice(0, 5)" class="border border-gray-200 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="font-medium text-gray-900 text-sm">{{ pattern.pattern_id }}</h3>
+                <span class="px-2 py-1 text-xs font-medium rounded-full" [class]="getPatternTypeColor(pattern.pattern_type)">
+                  {{ pattern.pattern_type | titlecase }}
+                </span>
+              </div>
+              <div class="grid grid-cols-2 gap-4 text-sm mb-2">
+                <div>
+                  <p class="text-gray-600">Explained Variance</p>
+                  <p class="font-medium">{{ (pattern.explained_variance * 100) | number:'1.1-1' }}%</p>
+                </div>
+                <div>
+                  <p class="text-gray-600">Confidence</p>
+                  <p class="font-medium" [class]="getConfidenceColor(pattern.confidence)">{{ (pattern.confidence * 100) | number:'1.1-1' }}%</p>
+                </div>
+              </div>
+              <div class="flex items-center justify-between text-xs text-gray-500">
+                <span>Dimensions: {{ pattern.latent_dimensions.length }}</span>
+                <span [class]="getMethodColor(pattern.compression_method)" class="px-2 py-1 rounded-full text-xs font-medium">
+                  {{ pattern.compression_method | uppercase }}
+                </span>
+              </div>
+            </div>
+          </div>
+          <ng-template #noPatternData>
+            <div class="text-center py-8">
+              <div class="text-gray-500">No pattern data available yet. Data collection in progress...</div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Pattern Insights -->
+      <div class="bg-white rounded-lg shadow">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-semibold text-gray-900">Pattern Insights</h2>
+        </div>
+        <div class="p-6">
+          <div class="space-y-4" *ngIf="patternInsights$ | async as insights; else noInsights">
+            <div *ngFor="let insight of insights.slice(0, 5)" class="border border-gray-200 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="font-medium text-gray-900">{{ insight.pattern_type | titlecase }}</h3>
+                <span class="px-2 py-1 text-xs font-medium rounded-full" [class]="getConfidenceColor(insight.confidence)">
+                  {{ (insight.confidence * 100) | number:'1.1-1' }}% confidence
+                </span>
+              </div>
+              <p class="text-sm text-gray-600 mb-3">{{ insight.description }}</p>
+              <div class="mb-3" *ngIf="insight.market_implications.length > 0">
+                <p class="text-xs text-gray-500 mb-1">Market Implications:</p>
+                <ul class="text-xs text-gray-600 space-y-1">
+                  <li *ngFor="let implication of insight.market_implications.slice(0, 2)">• {{ implication }}</li>
+                </ul>
+              </div>
+              <div *ngIf="insight.recommendations.length > 0">
+                <p class="text-xs text-gray-500 mb-1">Recommendations:</p>
+                <ul class="text-xs text-gray-600 space-y-1">
+                  <li *ngFor="let rec of insight.recommendations.slice(0, 2)">• {{ rec }}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <ng-template #noInsights>
+            <div class="text-center py-8">
+              <div class="text-gray-500">No insights available yet. Pattern analysis in progress...</div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compression Methods Performance -->
+    <div class="mt-8 bg-white rounded-lg shadow">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900">Compression Methods Performance</h2>
+      </div>
+      <div class="p-6">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200" *ngIf="compressionMetrics$ | async as metrics; else noCompressionData">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Compression Ratio</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Explained Variance</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reconstruction Error</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Processing Time</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr *ngFor="let metric of metrics.slice(0, 10)" class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span [class]="getMethodColor(metric.method)" class="px-2 py-1 text-xs font-medium rounded-full">
+                    {{ metric.method | uppercase }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ metric.compression_ratio | number:'1.2-2' }}x
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ (metric.explained_variance * 100) | number:'1.1-1' }}%
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ metric.reconstruction_error | number:'1.4-4' }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ metric.processing_time | number:'1.3-3' }}s
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <ng-template #noCompressionData>
+            <div class="text-center py-8">
+              <div class="text-gray-500">No compression metrics available yet. Data analysis in progress...</div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

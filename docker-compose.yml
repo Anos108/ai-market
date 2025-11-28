@@ -1,0 +1,71 @@
+services:
+  # FastAPI service for external API access
+  api-service:
+    build: .
+    container_name: market-ai-api
+    restart: unless-stopped
+    command: ["python3", "start_system_final.py"]
+    environment:
+      - PYTHONPATH=/app
+      - LOG_LEVEL=INFO
+      - POSTGRES_HOST=ai_market_postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=ai_market_system
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "8001:8001"
+    depends_on:
+      ai_market_postgres:
+        condition: service_healthy
+    networks:
+      - market-ai-network
+
+  # PostgreSQL Database
+  ai_market_postgres:
+    image: postgres:15-alpine
+    container_name: ai_market_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ai_market_system
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - market-ai-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ai_market_system"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # pgAdmin for database management
+  ai_market_pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: ai_market_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@ai-market.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - ai_market_postgres
+    networks:
+      - market-ai-network
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+
+networks:
+  market-ai-network:
+    driver: bridge
