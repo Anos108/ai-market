@@ -17,8 +17,10 @@ from concurrent.futures import ThreadPoolExecutor
 import warnings
 warnings.filterwarnings('ignore')
 
-from ..agents.base_agent import AgentSignal, SignalType
-from ..context.regime_detection import MarkovRegimeDetector, RegimeType
+from agents.base_agent import AgentSignal, SignalType
+from context.regime_detection import MarkovRegimeDetector, RegimeType
+from data.mt5_ingestor import MT5Ingestor
+from data.data_ingestors import DataIngestionConfig
 
 logger = logging.getLogger(__name__)
 
@@ -197,10 +199,25 @@ class BacktestEngine:
         try:
             all_data = {}
             
+            # Initialize MT5 ingestor if configured
+            mt5_ingestor = None
+            if self.config.get('data_source') == 'mt5':
+                ingest_config = DataIngestionConfig(
+                    symbols=symbols,
+                    start_date=start_date,
+                    end_date=end_date,
+                    interval='1d' # Default to daily for backtesting
+                )
+                mt5_ingestor = MT5Ingestor(ingest_config)
+
             for symbol in symbols:
                 try:
-                    ticker = yf.Ticker(symbol)
-                    data = ticker.history(start=start_date, end=end_date)
+                    if self.config.get('data_source') == 'mt5' and mt5_ingestor:
+                        data = mt5_ingestor.fetch_data(symbol, start_date, end_date)
+                    else:
+                        # Default to yfinance
+                        ticker = yf.Ticker(symbol)
+                        data = ticker.history(start=start_date, end=end_date)
                     
                     if not data.empty:
                         all_data[symbol] = data
