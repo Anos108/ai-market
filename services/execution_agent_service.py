@@ -10,6 +10,7 @@ import random
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +20,15 @@ class ExecutionAgentService:
     def __init__(self, db_pool: asyncpg.Pool):
         self.db_pool = db_pool
         self._initialize_database()
+
+        self.mt5_service = None
+        if os.getenv('USE_MT5', 'false').lower() == 'true':
+            try:
+                from services.mt5_service import MT5Service
+                self.mt5_service = MT5Service()
+                logger.info("MT5 Execution enabled in ExecutionAgentService")
+            except ImportError:
+                logger.warning("MT5Service could not be imported")
     
     def _initialize_database(self):
         """Initialize execution agent database tables."""
@@ -87,6 +97,31 @@ class ExecutionAgentService:
     
     async def get_orders(self, limit: int = 50) -> List[Dict[str, Any]]:
         """Get recent orders with real data."""
+        # If MT5 is enabled, fetch from MT5 first (or merge)
+        mt5_orders = []
+        if self.mt5_service:
+            try:
+                mt5_orders_raw = await self.mt5_service.get_orders()
+                # Format MT5 orders to match our schema
+                for order in mt5_orders_raw:
+                     # MT5 order structure needs mapping
+                     mt5_orders.append({
+                        "order_id": str(order.get('ticket')),
+                        "symbol": order.get('symbol'),
+                        "order_type": "limit" if "LIMIT" in str(order.get('type')) else "market", # simplified
+                        "side": "buy" if order.get('type') in [0, 2, 4] else "sell", # 0=buy, 1=sell
+                        "quantity": float(order.get('volume_initial', 0)),
+                        "price": float(order.get('price_open', 0)),
+                        "status": "pending", # Active orders in MT5 are pending
+                        "strategy": "Manual/MT5",
+                        "commission": 0.0,
+                        "execution_time_seconds": 0,
+                        "created_at": datetime.fromtimestamp(order.get('time_setup', 0)).isoformat(),
+                        "filled_at": None
+                     })
+            except Exception as e:
+                logger.error(f"Error fetching MT5 orders: {e}")
+
         try:
             async with self.db_pool.acquire() as conn:
                 rows = await conn.fetch("""
@@ -125,14 +160,48 @@ class ExecutionAgentService:
                         "filled_at": row['filled_at'].isoformat() if row['filled_at'] else None
                     })
                 
-                return orders
+                # Combine MT5 orders with DB orders, avoiding duplicates
+                # Use a dictionary keyed by order_id to merge
+                all_orders_map = {o['order_id']: o for o in orders}
+
+                # Merge MT5 orders (they take precedence if we want real-time status,
+                # but DB might have more metadata like 'strategy' name if we saved it)
+                for mt5_order in mt5_orders:
+                    if mt5_order['order_id'] in all_orders_map:
+                        # Update status from MT5
+                        all_orders_map[mt5_order['order_id']]['status'] = mt5_order['status']
+                    else:
+                        all_orders_map[mt5_order['order_id']] = mt5_order
+
+                return list(all_orders_map.values())
                 
         except Exception as e:
             logger.error(f"Error getting orders: {e}")
-            return []
+            return mt5_orders # Return at least MT5 orders if DB fails
     
     async def get_positions(self) -> List[Dict[str, Any]]:
         """Get current positions with real data."""
+        mt5_positions = []
+        if self.mt5_service:
+            try:
+                raw_positions = await self.mt5_service.get_positions()
+                for pos in raw_positions:
+                    mt5_positions.append({
+                        "symbol": pos.get('symbol'),
+                        "quantity": float(pos.get('volume', 0)),
+                        "average_price": float(pos.get('price_open', 0)),
+                        "market_value": float(pos.get('volume', 0) * pos.get('price_current', 0)),
+                        "unrealized_pnl": float(pos.get('profit', 0)),
+                        "realized_pnl": 0.0, # Not readily available in positions_get
+                        "total_commission": 0.0,
+                        "position_type": "long" if pos.get('type') == 0 else "short",
+                        "strategy": "MT5",
+                        "created_at": datetime.fromtimestamp(pos.get('time', 0)).isoformat(),
+                        "updated_at": datetime.now().isoformat()
+                    })
+            except Exception as e:
+                logger.error(f"Error fetching MT5 positions: {e}")
+
         try:
             async with self.db_pool.acquire() as conn:
                 rows = await conn.fetch("""
@@ -168,11 +237,80 @@ class ExecutionAgentService:
                         "updated_at": row['updated_at'].isoformat()
                     })
                 
-                return positions
+                # If using MT5, we might want to prefer MT5 positions over DB ones or show both
+                # For now, let's append them. Duplication might occur if DB syncs with MT5 separately.
+                return mt5_positions + positions
                 
         except Exception as e:
             logger.error(f"Error getting positions: {e}")
-            return []
+            return mt5_positions
+
+    async def execute_order(self, symbol: str, action: str, quantity: float,
+                           order_type: str = "market", price: Optional[float] = None,
+                           sl: Optional[float] = None, tp: Optional[float] = None,
+                           strategy: str = "Manual") -> Dict[str, Any]:
+        """Execute a trade order."""
+
+        # 1. Execute on MT5 if enabled
+        mt5_result = None
+        status = "pending"
+        filled_at = None
+        execution_time = None
+
+        if self.mt5_service:
+            try:
+                # Map internal action to MT5 action types
+                mt5_action = action.lower()
+                if order_type.lower() == 'limit':
+                    mt5_action = f"{action}_limit"
+                elif order_type.lower() == 'stop':
+                     mt5_action = f"{action}_stop"
+
+                res = await self.mt5_service.execute_order(
+                    symbol=symbol,
+                    action_type=mt5_action,
+                    volume=quantity,
+                    price=price,
+                    sl=sl,
+                    tp=tp,
+                    comment=strategy
+                )
+
+                mt5_result = res
+                if res.get('retcode') == 10009: # TRADE_RETCODE_DONE
+                    status = "filled"
+                    filled_at = datetime.now()
+                    execution_time = 0.5 # Estimated
+                else:
+                    logger.warning(f"MT5 Order failed: {res.get('comment')}")
+                    # We might still want to record the attempt?
+                    # For now proceed to DB recording
+            except Exception as e:
+                logger.error(f"MT5 execution error: {e}")
+
+        # 2. Record in Database
+        order_id = f"ORD-{int(datetime.now().timestamp())}"
+
+        try:
+             async with self.db_pool.acquire() as conn:
+                await conn.execute("""
+                    INSERT INTO execution_orders
+                    (order_id, symbol, order_type, side, quantity, price, status, strategy,
+                     commission, execution_time_seconds, created_at, filled_at)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+                """, order_id, symbol, order_type, action, quantity, price, status,
+                     strategy, 0.0, execution_time, datetime.now(), filled_at)
+
+                logger.info(f"Order {order_id} recorded in DB (Status: {status})")
+
+        except Exception as e:
+            logger.error(f"Error recording order to DB: {e}")
+
+        return {
+            "order_id": order_id,
+            "status": status,
+            "mt5_result": mt5_result
+        }
     
     async def get_execution_strategies(self) -> List[Dict[str, Any]]:
         """Get execution strategies with real data."""
