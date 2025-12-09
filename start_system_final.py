@@ -124,6 +124,10 @@ async def lifespan(app: FastAPI):
             from data.enhanced_data_sources import create_enhanced_data_manager
             dependencies.enhanced_data_manager = create_enhanced_data_manager()
             logger.info("✅ Enhanced data sources initialized")
+
+            # Initialize MT5 Ingestor if enabled
+            if os.getenv('USE_MT5', 'false').lower() == 'true':
+                 dependencies.enhanced_data_manager.enable_mt5_ingestor()
         except Exception as e:
             logger.error(f"❌ Failed to initialize enhanced data sources: {e}")
         

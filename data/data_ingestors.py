@@ -18,6 +18,7 @@ import logging
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -613,3 +614,21 @@ class DataIngestionOrchestrator:
         """Add a new ingestor to the orchestrator."""
         self.ingestors[name] = ingestor
         logger.info(f"Added ingestor: {name}")
+
+    def enable_mt5_ingestor(self):
+        """Enable MT5 ingestor."""
+        try:
+            from .mt5_ingestor import MT5Ingestor
+            self.ingestors['mt5'] = MT5Ingestor(self.config)
+            # Make MT5 the primary ingestor for fetch_all_data loop logic if needed
+            # or simply allow accessing it.
+            # If we want to replace yahoo_finance with MT5 for main data:
+            if os.getenv('USE_MT5', 'false').lower() == 'true':
+                 self.ingestors['yahoo_finance'] = self.ingestors['mt5']
+                 logger.info("Replaced Yahoo Finance with MT5 Ingestor")
+
+            logger.info("Enabled MT5 Ingestor")
+        except ImportError:
+            logger.warning("Could not import MT5Ingestor")
+        except Exception as e:
+            logger.error(f"Failed to enable MT5 ingestor: {e}")

@@ -80,3 +80,4 @@ pre-commit>=3.3.0
 # Containerization
 docker>=6.1.0
 docker-compose>=1.29.0
+MetaTrader5>=5.0.0
